@@ -42,3 +42,9 @@ restart_run={
 [physics]
 
 common/physics_ticks_per_second=60
+
+[rendering]
+
+; [DB:PLATFORM:WEB_RENDERER]
+; WebGL 2 requires Godot's Compatibility renderer. Desktop keeps Forward+.
+renderer/rendering_method.web="gl_compatibility"
