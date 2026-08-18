@@ -5,7 +5,7 @@ extends Node3D
 # presentation: living soap film, single-frame rupture, fluid spray, mist, and audio.
 # Gameplay still owns damage outcomes, death, collision shutdown, and despawn timing.
 
-const POP_SOUND_SECONDS: float = 0.042
+const POP_SOUND_SECONDS: float = 0.058
 const POP_SAMPLE_RATE: int = 22050
 const BUBBLE_FILM_RADIUS: float = 0.65
 const RUPTURE_SECONDS: float = 0.016
@@ -206,46 +206,42 @@ void fragment() {
 
 func _spawn_surface_droplet_spray() -> void:
 	# [DB:PRESENTATION:POP_SPRAY]
-	# The vanished film becomes a localized, irregular 3D belt of microscopic
-	# droplets around the trailing edge. Individual droplets expand outward; no
-	# torus, halo, or rendered circle exists.
+	# The membrane now converts into liquid at the bubble's center rather than
+	# visibly detonating at the antipode. Tiny seed positions form an irregular
+	# 3D cloud around center, then pressure sends droplets outward in all directions.
 	var retract_axis: Vector3 = -_impact_direction
-	var tangent := Vector3(-retract_axis.y, retract_axis.x, 0.0).normalized()
-	var depth_axis := Vector3(0.0, 0.0, 1.0)
-	var trailing_center: Vector3 = retract_axis * (BUBBLE_FILM_RADIUS * 0.78)
 	var droplet_material: StandardMaterial3D = _build_film_material(Color(0.88, 0.98, 1.0, 0.54))
 
 	for index: int in range(SPRAY_DROPLET_COUNT):
-		var fraction: float = float(index) / float(SPRAY_DROPLET_COUNT)
-		var angle: float = (fraction * TAU) + sin(float(index) * 2.17) * 0.16
-		var belt_radius: float = 0.115 + float(index % 5) * 0.009
-		var tangent_offset: float = cos(angle) * belt_radius
-		var depth_offset: float = sin(angle) * belt_radius * (0.72 + float(index % 3) * 0.08)
-		var origin: Vector3 = trailing_center
-		origin += tangent * tangent_offset
-		origin += depth_axis * depth_offset
-		origin += retract_axis * (float((index % 4) - 1) * 0.012)
+		# Deterministic spherical distribution, slightly compressed in depth for
+		# phone readability. This avoids both a rear-edge belt and a perfect ring.
+		var fraction: float = (float(index) + 0.5) / float(SPRAY_DROPLET_COUNT)
+		var vertical: float = 1.0 - 2.0 * fraction
+		var radial: float = sqrt(maxf(0.0, 1.0 - vertical * vertical))
+		var azimuth: float = float(index) * 2.39996323 + sin(float(index) * 1.31) * 0.09
+		var seed_direction := Vector3(cos(azimuth) * radial, vertical, sin(azimuth) * radial * 0.72).normalized()
+		var seed_radius: float = 0.042 + float(index % 4) * 0.007
+		var origin: Vector3 = seed_direction * seed_radius
 
 		var droplet := MeshInstance3D.new()
 		var droplet_mesh := SphereMesh.new()
-		var radius: float = 0.010 + float(index % 4) * 0.0035
-		droplet_mesh.radius = radius
-		droplet_mesh.height = radius * 2.0
+		var droplet_radius: float = 0.010 + float(index % 4) * 0.0035
+		droplet_mesh.radius = droplet_radius
+		droplet_mesh.height = droplet_radius * 2.0
 		droplet.mesh = droplet_mesh
 		droplet.material_override = droplet_material
 		droplet.position = origin
 		add_child(droplet)
 
-		var radial_out: Vector3 = origin.normalized()
-		var irregular_side: float = sin(float(index) * 3.91) * 0.065
-		var irregular_depth: float = cos(float(index) * 2.63) * 0.055
-		var pressure_direction: Vector3 = radial_out * 0.72
-		pressure_direction += retract_axis * 0.34
-		pressure_direction += tangent * irregular_side
-		pressure_direction += depth_axis * irregular_depth
+		var pressure_direction: Vector3 = seed_direction * 0.86 + retract_axis * 0.14
+		pressure_direction += Vector3(
+			sin(float(index) * 3.91) * 0.055,
+			cos(float(index) * 2.17) * 0.035,
+			cos(float(index) * 2.63) * 0.045
+		)
 		pressure_direction = pressure_direction.normalized()
 
-		var travel: float = 0.14 + float(index % 6) * 0.022
+		var travel: float = 0.16 + float(index % 6) * 0.022
 		var gravity_drop: float = 0.018 + float(index % 4) * 0.010
 		var target_position: Vector3 = origin + pressure_direction * travel
 		target_position.y -= gravity_drop
@@ -263,12 +259,12 @@ func _spawn_surface_droplet_spray() -> void:
 
 func _spawn_mist_puff() -> void:
 	# [DB:PRESENTATION:POP_MIST]
-	# A few soft translucent motes linger only for several frames after the liquid
-	# spray. Their loose spacing keeps the remnant from becoming another ring.
+	# The remnant also lives at the bubble center now. Loose offsets and short drift
+	# keep it organic without turning it into another halo or rear-edge marker.
 	var retract_axis: Vector3 = -_impact_direction
 	var tangent := Vector3(-retract_axis.y, retract_axis.x, 0.0).normalized()
 	var mist_material: StandardMaterial3D = _build_film_material(Color(0.92, 0.99, 1.0, 0.12))
-	var mist_center: Vector3 = retract_axis * (BUBBLE_FILM_RADIUS * 0.64)
+	var mist_center: Vector3 = Vector3.ZERO
 
 	for index: int in range(MIST_MOTE_COUNT):
 		var mote := MeshInstance3D.new()
@@ -279,12 +275,12 @@ func _spawn_mist_puff() -> void:
 		mote.mesh = mote_mesh
 		mote.material_override = mist_material
 		mote.position = mist_center
-		mote.position += tangent * sin(float(index) * 2.4) * 0.075
-		mote.position += Vector3(0.0, cos(float(index) * 1.9) * 0.045, float((index % 3) - 1) * 0.045)
+		mote.position += tangent * sin(float(index) * 2.4) * 0.055
+		mote.position += Vector3(0.0, cos(float(index) * 1.9) * 0.038, float((index % 3) - 1) * 0.035)
 		mote.scale = Vector3.ONE * 0.68
 		add_child(mote)
 
-		var drift: Vector3 = retract_axis * (0.035 + float(index % 2) * 0.018)
+		var drift: Vector3 = retract_axis * (0.020 + float(index % 2) * 0.012)
 		drift += tangent * sin(float(index) * 1.7) * 0.025
 		drift.y += 0.012
 		var target_position: Vector3 = mote.position + drift
@@ -315,8 +311,9 @@ func _play_pop_audio() -> void:
 
 func _build_pop_stream() -> AudioStreamWAV:
 	# [DB:PRESENTATION:POP_AUDIO]
-	# A dry high-frequency soap-film POP: one broadband snap, a tiny pressure body,
-	# then silence. No echo, ringing tail, or resonant glass-like overtones.
+	# A rounded wet soap-bubble pop: a tiny broadband attack followed immediately
+	# by a short falling mid-frequency membrane/pressure body. No 1.45 kHz click,
+	# echo, ringing tail, or glass-like resonant spike.
 	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.mix_rate = POP_SAMPLE_RATE
@@ -337,17 +334,20 @@ func _build_pop_stream() -> AudioStreamWAV:
 		var noise_edge: float = noise - previous_noise
 		previous_noise = noise
 
-		var snap_window: float = maxf(0.0, 1.0 - progress * 3.6)
-		var snap_envelope: float = pow(snap_window, 2.6)
-		var body_window: float = maxf(0.0, 1.0 - progress * 2.25)
-		var body_envelope: float = pow(body_window, 4.5)
+		var attack_window: float = maxf(0.0, 1.0 - progress * 5.8)
+		var attack_envelope: float = pow(attack_window, 1.9)
+		var body_window: float = maxf(0.0, 1.0 - progress)
+		var body_envelope: float = pow(body_window, 3.8)
+		var membrane_window: float = maxf(0.0, 1.0 - progress * 1.35)
+		var membrane_envelope: float = pow(membrane_window, 2.8)
 
-		var snap: float = noise_edge * 0.24 * snap_envelope
-		var air: float = noise * 0.055 * body_envelope
-		var click_frequency: float = 1450.0 - progress * 360.0
-		var click: float = sin(TAU * click_frequency * time_seconds) * 0.075 * snap_envelope
-		var pressure: float = sin(TAU * 285.0 * time_seconds) * 0.032 * body_envelope
-		var sample: float = clampf(snap + air + click + pressure, -1.0, 1.0)
+		var soft_snap: float = noise_edge * 0.10 * attack_envelope
+		var air: float = noise * 0.035 * body_envelope
+		var membrane_frequency: float = 690.0 - progress * 310.0
+		var membrane: float = sin(TAU * membrane_frequency * time_seconds) * 0.12 * membrane_envelope
+		var pressure_frequency: float = 255.0 - progress * 65.0
+		var pressure: float = sin(TAU * pressure_frequency * time_seconds) * 0.055 * body_envelope
+		var sample: float = clampf(soft_snap + air + membrane + pressure, -1.0, 1.0)
 		data.encode_s16(frame * 2, int(sample * 32767.0))
 
 	stream.data = data
