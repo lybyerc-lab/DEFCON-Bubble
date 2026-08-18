@@ -56,7 +56,11 @@ godot --headless --path . --script res://tests/castle_impact_smoke.gd
 godot --headless --path . --script res://tests/first_defense_smoke.gd
 ```
 
-Phone-facing preview and native export workflows should be source-driven and traceable to an exact Git revision. See `docs/MOBILE_FIRST.md`.
+## Phone review booth
+
+The replaceable Web review booth is available at <https://lybyerc-lab.github.io/DEFCON-Bubble/>. Always use `docs/ACTIVE_HANDOFF.md` and live GitHub state to confirm which exact revision is deployed before judging a candidate.
+
+Phone-facing preview and native export workflows must remain source-driven and traceable to an exact Git revision. See `docs/MOBILE_FIRST.md`.
 
 ## Project truth
 

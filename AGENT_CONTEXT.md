@@ -54,7 +54,7 @@ Resolve live GitHub state before assuming the status of any branch, pull request
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:DIRECTOR]`, `[DB:DEBUG:SEED]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:PRESENTATION:FIRST_DEFENSE_HUD]`, `[DB:TEST:FIRST_DEFENSE]`.
 
 ## Do not
 

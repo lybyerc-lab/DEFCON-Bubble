@@ -58,17 +58,29 @@ The proof must preserve the accepted toothpick, POP, impact, castle, and reset p
 - deterministic positive and negative fixtures pass under pinned Godot 4.7.1
 - exact-source Web preview builds and deploys for phone judgment
 
+## Live candidate status
+
+The current candidate is intentionally draft and unmerged. This in-repository snapshot records the implementation commit; always resolve the live PR head because documentation-only follow-ups necessarily advance the branch:
+
+- branch: `agent/first-defense-wave`
+- implementation commit: `2ca6787c974931a98dde8c867fa97dcba75677c1`
+- base: accepted `main` at `10cb2f20446c759dfa62a1303483552634fddda4`
+- pull request: [#8](https://github.com/lybyerc-lab/DEFCON-Bubble/pull/8)
+- Godot Verify #32: passed at run `32174264479`
+- GitHub Pages Preview: passed at run `32174232764`
+- phone review booth: <https://lybyerc-lab.github.io/DEFCON-Bubble/>
+
+Pinned Godot 4.7.1 executed the full foundation, damage, POP, castle-impact, first-defense, import, and headless-boot gates on that implementation commit. The Game Director's phone verdict is still pending. Do not mark PR #8 ready or merge it until that player-facing acceptance is explicit.
+
 ## Immediate sequence
 
-After resolving live GitHub state:
+After re-verifying the live candidate:
 
-1. Keep the encounter to three identical bubbles, one lane, and one existing modular chunk.
-2. Preserve accepted toothpick, POP, castle-impact, touch, renderer, and preview contracts.
-3. Prove exact spawn count/timing, unique IDs, damaged-castle victory, castle-destruction loss, pending-spawn cancellation, and stopped surviving advance.
-4. Run pinned Godot verification and exact-source Web export/deployment.
-5. Judge pressure, firing rhythm, spacing, status readability, and replay clarity on a phone.
-6. Tune only bounded scene timing/spacing or presentation when player evidence identifies a defect.
-7. Promote only after technical proof and Game Director acceptance.
+1. Judge pressure, firing rhythm, starting distance, status readability, terminal clarity, and replay behavior on a phone.
+2. Confirm both outcomes: three resolved bubbles hold the castle; two leaked bubbles destroy it.
+3. If evidence identifies a defect, make only one bounded scene-timing, spacing, control-state, or presentation adjustment.
+4. Re-run pinned Godot verification and exact-source Pages deployment after any candidate change.
+5. Mark PR #8 ready and promote only after explicit Game Director acceptance.
 
 ## Must not drift into
 

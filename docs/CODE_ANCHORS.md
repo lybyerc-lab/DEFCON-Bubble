@@ -26,7 +26,7 @@ Initial domains:
 - `SAVE`
 - `AGENT`
 
-Examples for the mobile-first platform boundary:
+Examples in the current codebase:
 
 - `[DB:INPUT:PLAYER_INTENT]`
 - `[DB:PLATFORM:MOBILE]`
@@ -34,6 +34,10 @@ Examples for the mobile-first platform boundary:
 - `[DB:PLATFORM:RENDERER_POLICY]`
 - `[DB:PERF:QUALITY]`
 - `[DB:PRESENTATION:POP_FX]`
+- `[DB:CASTLE:CHUNK]`
+- `[DB:WAVE:FIRST_DEFENSE]`
+- `[DB:PRESENTATION:FIRST_DEFENSE_HUD]`
+- `[DB:TEST:FIRST_DEFENSE]`
 
 Rules:
 
