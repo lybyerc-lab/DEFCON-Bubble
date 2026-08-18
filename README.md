@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0 and the shared typed damage boundary are accepted on `main`. The current gameplay edge is the first Bubble #1 POP proof, with phone-accessible play and feel validation now part of acceptance. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, and the first Bubble #1 toothpick POP proof are accepted on `main`. The next bounded gameplay milestone has not been selected yet. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 

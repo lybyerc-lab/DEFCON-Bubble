@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - agent/pop-proof
   workflow_dispatch:
 
 permissions:
