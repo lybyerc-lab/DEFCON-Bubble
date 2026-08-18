@@ -38,28 +38,43 @@ Godot Verify #26 passed on the accepted PR head. The post-merge `main` verificat
 
 ## Current bounded milestone
 
-No next gameplay milestone is selected yet. Do not infer one from the system map, long-term fantasy, or previously excluded POP scope.
+`[DB:CASTLE:IMPACT]` is the current gameplay milestone.
+
+Prove one Bubble #1 can advance from the right, contact one modular sandcastle chunk, request one typed `IMPACT` through the accepted damage boundary, and produce a local visible damage response owned by that chunk.
+
+The proof must preserve the accepted POP path: the defender can still shoot the approaching bubble with one toothpick before it reaches the castle.
+
+### Acceptance target
+
+- bubble advance is frame-rate independent and disabled outside the proof unless explicitly enabled
+- bubble contact requests exactly one valid `IMPACT` and cannot damage the chunk twice
+- the chunk ignores `PIERCE`, owns health, and owns destruction at zero health
+- presentation observes chunk damage/destruction signals without becoming gameplay authority
+- the arena shows one readable castle chunk, one approaching bubble, and the accepted FIRE/RESET path
+- deterministic positive and negative fixtures pass under pinned Godot 4.7.1
+- exact-source Web preview builds and deploys for phone judgment
 
 ## Immediate sequence
 
 After resolving live GitHub state:
 
-1. Get explicit Game Director direction for one next player-facing question.
-2. Record that question here as a bounded milestone with acceptance evidence and non-goals.
-3. Branch from current `main`; do not continue feature work on the merged POP branch.
-4. Preserve the accepted damage, POP ownership, mobile-first, renderer, and preview contracts.
-5. Prefer existing licensed assets for commodity needs when they meet the creative target; record provenance and license.
-6. Build the smallest playable proof that answers the selected question.
-7. Run deterministic automation, then collect the representative player/device evidence required by the risk.
-8. Promote only after technical proof and Game Director acceptance.
+1. Keep the proof to one advancing bubble and one modular chunk.
+2. Preserve the accepted toothpick, POP, touch, renderer, and preview contracts.
+3. Prove valid contact, ignored damage type, wrong-target rejection, one-impact idempotence, localized damage, and chunk-owned destruction.
+4. Run pinned Godot verification and exact-source Web export/deployment.
+5. Judge approach timing, castle readability, impact feel, and defensive urgency on a phone.
+6. Tune only inside this milestone when evidence identifies a defect.
+7. Promote only after technical proof and Game Director acceptance.
 
-## Until the next milestone is selected
+## Must not drift into
 
-- do not silently choose waves, castle damage, upgrades, repair, progression, or another major system
-- do not reopen accepted POP tuning without new player evidence or a measured defect
-- do not build generalized frameworks ahead of a selected gameplay need
-- do not add pooling or speculative mobile optimization without measurements
-- do not begin native-store packaging without an explicit platform/release milestone
+- multiple chunks, full castle survival, or castle-wide orchestration
+- waves, procedural spawning, or generalized enemy navigation
+- repair, upgrades, progression, rewards, or economy
+- new weapons or additional bubble types
+- reopening accepted POP tuning without new player evidence or a measured defect
+- pooling or speculative mobile optimization without measurements
+- native-store packaging
 
 ## Standing laws
 

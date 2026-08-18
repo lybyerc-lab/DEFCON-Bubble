@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/castle/castle_chunk.gd" id="1_chunk"]
+[ext_resource type="Script" path="res://scripts/combat/damage_receiver.gd" id="2_receiver"]
+[ext_resource type="Script" path="res://scripts/presentation/castle_chunk_fx.gd" id="3_fx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_chunk"]
+size = Vector3(1.7, 1.35, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape_chunk"]
+size = Vector3(1.7, 1.35, 1.2)
+
+[node name="CastleChunk" type="Area3D"]
+collision_layer = 32
+collision_mask = 8
+monitoring = true
+monitorable = true
+script = ExtResource("1_chunk")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="ChunkMesh" type="MeshInstance3D" parent="Visual"]
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape_chunk")
+
+[node name="DamageReceiver" type="Node" parent="."]
+script = ExtResource("2_receiver")
+target_id = &"castle:chunk:gate:proof"
+
+[node name="DamageFx" type="Node3D" parent="."]
+script = ExtResource("3_fx")
