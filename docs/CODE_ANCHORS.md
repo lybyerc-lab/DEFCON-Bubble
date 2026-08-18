@@ -8,6 +8,7 @@ Initial domains:
 - `CORE`
 - `COMBAT`
 - `PLAYER`
+- `INPUT`
 - `WEAPON`
 - `ENEMY`
 - `CASTLE`
@@ -15,12 +16,24 @@ Initial domains:
 - `UPGRADE`
 - `DATA`
 - `UI`
+- `PRESENTATION`
 - `AUDIO`
 - `VFX`
+- `PLATFORM`
+- `PERF`
 - `DEBUG`
 - `TEST`
 - `SAVE`
 - `AGENT`
+
+Examples for the mobile-first platform boundary:
+
+- `[DB:INPUT:PLAYER_INTENT]`
+- `[DB:PLATFORM:MOBILE]`
+- `[DB:PLATFORM:WEB_PREVIEW]`
+- `[DB:PLATFORM:RENDERER_POLICY]`
+- `[DB:PERF:QUALITY]`
+- `[DB:PRESENTATION:POP_FX]`
 
 Rules:
 
@@ -29,3 +42,4 @@ Rules:
 3. Rename the anchor when responsibility changes.
 4. Prefer code symbols, types, stable IDs, groups, signals, and tests over redundant comments.
 5. Structured logs and test names may reuse anchor vocabulary.
+6. Platform anchors identify adapters and policies, not gameplay ownership. Mobile or Web UI must still route through gameplay contracts.
