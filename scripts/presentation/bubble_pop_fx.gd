@@ -5,8 +5,6 @@ extends Node3D
 # presentation: living soap film, single-frame rupture, fluid spray, mist, and audio.
 # Gameplay still owns damage outcomes, death, collision shutdown, and despawn timing.
 
-const POP_SOUND_SECONDS: float = 0.058
-const POP_SAMPLE_RATE: int = 22050
 const BUBBLE_FILM_RADIUS: float = 0.65
 const RUPTURE_SECONDS: float = 0.016
 const SPRAY_DROPLET_COUNT: int = 22
@@ -33,6 +31,7 @@ func _ready() -> void:
 	assert(damage_receiver != null, "[DB:PRESENTATION:POP_FX] DamageReceiver is required.")
 	assert(flash_shell != null, "[DB:PRESENTATION:POP_FX] FlashShell is required.")
 	assert(pop_audio != null, "[DB:PRESENTATION:POP_FX] PopAudio is required.")
+	assert(pop_audio.stream != null, "[DB:PRESENTATION:POP_FX] CC0 bubble POP stream is required.")
 
 	# [DB:PRESENTATION:BUBBLE_FILM]
 	# The living bubble should read as a thin soap membrane before POP. Keep the
@@ -305,50 +304,4 @@ func _build_film_material(color: Color) -> StandardMaterial3D:
 
 
 func _play_pop_audio() -> void:
-	pop_audio.stream = _build_pop_stream()
 	pop_audio.play()
-
-
-func _build_pop_stream() -> AudioStreamWAV:
-	# [DB:PRESENTATION:POP_AUDIO]
-	# A rounded wet soap-bubble pop: a tiny broadband attack followed immediately
-	# by a short falling mid-frequency membrane/pressure body. No 1.45 kHz click,
-	# echo, ringing tail, or glass-like resonant spike.
-	var stream := AudioStreamWAV.new()
-	stream.format = AudioStreamWAV.FORMAT_16_BITS
-	stream.mix_rate = POP_SAMPLE_RATE
-	stream.stereo = false
-
-	var frame_count: int = int(POP_SAMPLE_RATE * POP_SOUND_SECONDS)
-	var data := PackedByteArray()
-	data.resize(frame_count * 2)
-	var previous_noise: float = 0.0
-
-	for frame: int in range(frame_count):
-		var time_seconds: float = float(frame) / float(POP_SAMPLE_RATE)
-		var progress: float = time_seconds / POP_SOUND_SECONDS
-
-		# Deterministic pseudo-noise keeps the placeholder reproducible.
-		var noise_hash: float = sin(float(frame) * 12.9898 + 78.233) * 43758.5453
-		var noise: float = ((noise_hash - floor(noise_hash)) * 2.0) - 1.0
-		var noise_edge: float = noise - previous_noise
-		previous_noise = noise
-
-		var attack_window: float = maxf(0.0, 1.0 - progress * 5.8)
-		var attack_envelope: float = pow(attack_window, 1.9)
-		var body_window: float = maxf(0.0, 1.0 - progress)
-		var body_envelope: float = pow(body_window, 3.8)
-		var membrane_window: float = maxf(0.0, 1.0 - progress * 1.35)
-		var membrane_envelope: float = pow(membrane_window, 2.8)
-
-		var soft_snap: float = noise_edge * 0.10 * attack_envelope
-		var air: float = noise * 0.035 * body_envelope
-		var membrane_frequency: float = 690.0 - progress * 310.0
-		var membrane: float = sin(TAU * membrane_frequency * time_seconds) * 0.12 * membrane_envelope
-		var pressure_frequency: float = 255.0 - progress * 65.0
-		var pressure: float = sin(TAU * pressure_frequency * time_seconds) * 0.055 * body_envelope
-		var sample: float = clampf(soft_snap + air + membrane + pressure, -1.0, 1.0)
-		data.encode_s16(frame * 2, int(sample * 32767.0))
-
-	stream.data = data
-	return stream

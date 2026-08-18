@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/basic_bubble.gd" id="1_bubble"]
 [ext_resource type="Script" path="res://scripts/combat/damage_receiver.gd" id="2_receiver"]
 [ext_resource type="Script" path="res://scripts/presentation/bubble_pop_fx.gd" id="3_pop_fx"]
+[ext_resource type="AudioStream" path="res://assets/audio/bubble_pop_cc0.wav" id="4_pop_audio"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_bubble"]
 radius = 0.65
@@ -43,3 +44,4 @@ mesh = SubResource("SphereMesh_flash")
 transparency = 1.0
 
 [node name="PopAudio" type="AudioStreamPlayer3D" parent="PopFx"]
+stream = ExtResource("4_pop_audio")
