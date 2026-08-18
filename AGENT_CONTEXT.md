@@ -44,9 +44,9 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 ## Current development edge
 
-Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, and `[DB:CASTLE:IMPACT]` are accepted on `main`. Those proofs establish one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, one modular castle chunk with local health/destruction, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
+Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. Those proofs establish the toothpick hit path, target-owned pop/despawn, one modular castle chunk with local health/destruction, a fixed three-bubble defense, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
 
-The current bounded milestone is `[DB:WAVE:FIRST_DEFENSE]`: exactly three ordinary BasicBubbles spawn from one right-side point at a fixed stagger and attack one existing CastleChunk. A proof-specific wave authority owns only READY/RUNNING/WON/LOST state, exact spawn timing/count, and terminal evaluation. This is one fixed encounter, not a reusable wave framework, content pipeline, or progression system.
+The current bounded milestone is `[DB:ENCOUNTER:MIXED_THREE_WAVE]`: introduce Fast Bubble through inherited BasicBubble gameplay, then run one authored three-wave Basic/Fast encounter against the same persistent two-health CastleChunk. Small typed spawn/wave Resources describe only the exact schedule; MixedEncounter owns READY/WAVE_ACTIVE/INTERMISSION/WON/LOST progression. This is not a reusable wave DSL, registry, upgrade loop, or economy.
 
 Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
@@ -54,7 +54,7 @@ Resolve live GitHub state before assuming the status of any branch, pull request
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:PRESENTATION:FIRST_DEFENSE_HUD]`, `[DB:TEST:FIRST_DEFENSE]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENEMY:FAST_BUBBLE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`.
 
 ## Do not
 
