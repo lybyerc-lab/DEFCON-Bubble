@@ -1,0 +1,179 @@
+name: GitHub Pages Preview
+
+on:
+  push:
+    branches:
+      - main
+      - agent/pop-proof
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: defcon-bubble-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-verify:
+    name: Build and verify Web preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+      statuses: write
+
+    steps:
+      # [DB:PLATFORM:WEB_PREVIEW]
+      - name: Mark Pages preview pending
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          payload="$(jq -n \
+            --arg state "pending" \
+            --arg target_url "${run_url}" \
+            --arg description "Building exact-source DEFCON BUBBLE phone preview" \
+            --arg context "pages-preview" \
+            '{state:$state,target_url:$target_url,description:$description,context:$context}')"
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -d "${payload}"
+
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build pinned Godot Web export
+        id: build_web
+        shell: bash
+        run: bash scripts/build_web.sh
+
+      - name: Verify exact preview candidate
+        id: verify_candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot_bin=".godot-web/Godot_v4.7.1-stable_linux.x86_64"
+          "${godot_bin}" --headless --path . --script res://tests/foundation_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/damage_contract_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/pop_proof_smoke.gd
+          "${godot_bin}" --headless --path . --quit-after 3
+          test -f build/web/index.html
+
+      - name: Configure GitHub Pages
+        id: configure_pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - name: Upload GitHub Pages artifact
+        id: upload_pages
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: build/web
+
+      - name: Record Pages preview build failure
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_OUTCOME: ${{ steps.build_web.outcome }}
+          VERIFY_OUTCOME: ${{ steps.verify_candidate.outcome }}
+          CONFIGURE_OUTCOME: ${{ steps.configure_pages.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload_pages.outcome }}
+        run: |
+          set -euo pipefail
+          stage="unknown"
+          if [ "${BUILD_OUTCOME}" != "success" ]; then
+            stage="build-web"
+          elif [ "${VERIFY_OUTCOME}" != "success" ]; then
+            stage="verify-candidate"
+          elif [ "${CONFIGURE_OUTCOME}" != "success" ]; then
+            stage="configure-pages"
+          elif [ "${UPLOAD_OUTCOME}" != "success" ]; then
+            stage="upload-pages"
+          fi
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          for context in "pages-preview" "pages-preview-failure/${stage}"; do
+            payload="$(jq -n \
+              --arg state "failure" \
+              --arg target_url "${run_url}" \
+              --arg description "Pages preview failed during ${stage}" \
+              --arg context "${context}" \
+              '{state:$state,target_url:$target_url,description:$description,context:$context}')"
+            curl -fsSL \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+              -d "${payload}"
+          done
+
+  deploy:
+    name: Deploy exact-source phone preview
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+      statuses: write
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'github-pages' || 'github-pages-preview' }}
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+
+      - name: Record exact-source preview success
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          payload="$(jq -n \
+            --arg state "success" \
+            --arg target_url "${PAGE_URL}" \
+            --arg description "Exact-source DEFCON BUBBLE phone preview" \
+            --arg context "pages-preview" \
+            '{state:$state,target_url:$target_url,description:$description,context:$context}')"
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -d "${payload}"
+
+      - name: Record Pages preview deployment failure
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          for context in "pages-preview" "pages-preview-failure/deploy-pages"; do
+            payload="$(jq -n \
+              --arg state "failure" \
+              --arg target_url "${run_url}" \
+              --arg description "Pages preview deployment failed" \
+              --arg context "${context}" \
+              '{state:$state,target_url:$target_url,description:$description,context:$context}')"
+            curl -fsSL \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+              -d "${payload}"
+          done

@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/toothpick_projectile.gd" id="1_toothpick"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_toothpick"]
+size = Vector3(0.8, 0.08, 0.08)
+
+[sub_resource type="BoxShape3D" id="BoxShape_toothpick"]
+size = Vector3(0.8, 0.08, 0.08)
+
+[node name="ToothpickProjectile" type="Area3D"]
+collision_layer = 4
+collision_mask = 8
+monitoring = true
+monitorable = false
+script = ExtResource("1_toothpick")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_toothpick")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape_toothpick")
