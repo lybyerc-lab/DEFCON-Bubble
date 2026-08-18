@@ -1,37 +1,39 @@
 # Active handoff
 
-## Current milestone
-`[DB:COMBAT:DAMAGE]` common damage contract
+## Recovery rule
+Resolve GitHub state first. Do not hardcode this file's own live HEAD.
 
-## Current branch / PR
-`agent/combat-damage-contract`
+- If PR #2 (`combat: establish typed damage contract`) is still open, verify its exact live head and finish that promotion before starting gameplay integration.
+- If PR #2 is merged, the damage contract is canonical and the next bounded milestone is the first POP proof.
 
-Resolve the live head SHA and PR from GitHub/Git at session start. Do not hardcode this file's own HEAD.
+## Canonical baseline
+Foundation 0 is accepted on `main`.
 
-Last verified canonical baseline: `main` commit `42aa750307ad5d8bf1d0a1149ff755602aca0c7c`.
-Foundation 0 code tree matches green PR-head tree `5df5d8d05bbc36be94f4997870276d31dffa7db4`; PR verification run `32083666776` passed before promotion.
+The shared damage boundary is:
+- `DamageRequest`: source ID, target ID, positive amount, typed damage category, impact position.
+- `DamageReceiver`: validates/routs and emits the request; owns no health, resistance, death, destruction, reward, or presentation outcome.
+- Initial damage categories: `PIERCE` and `IMPACT`.
 
-## Current acceptance target
-Prove the typed damage request and receiver contract in Godot 4.7.1 CI before implementing Bubble #1.
+## Next bounded milestone
+`[DB:COMBAT:POP]` first POP proof.
 
-## What is true now
-- Foundation 0 is canonical on `main`.
-- `DamageRequest` is the common construct-once hit message.
-- `DamageReceiver` validates/routs requests but owns no gameplay outcome.
-- `PIERCE` and `IMPACT` are the initial typed damage categories.
-- A dedicated headless damage-contract test is part of automatic Godot verification.
+Prove one basic bubble can receive a `PIERCE` request from a toothpick hit and own its resulting pop/despawn behavior through the shared damage boundary.
 
-## What is blocked
-Nothing known. This branch requires CI evidence before promotion.
+Keep the first POP proof narrow: one basic bubble, one toothpick projectile/hit path, deterministic test coverage, and satisfying-but-minimal pop feedback only after gameplay truth works.
 
-## Must not change
-- No production bubble, toothpick projectile, health system, castle damage, wave logic, upgrades, saves, or progression in this milestone.
+## Must not drift into
+- waves or procedural spawning
+- castle damage
+- upgrade systems
+- repair systems
+- save/meta progression
+- large weapon trees
+- pooling before profiling
+- generalized enemy frameworks beyond what Bubble #1 actually needs
+
+## Standing laws
 - Targets own resistance, health, death, and destruction decisions.
-- Presentation never becomes damage authority.
+- Presentation reacts to gameplay truth; it never becomes damage authority.
+- Keep `main` buildable.
+- Automation proves; promotion is deliberate.
 - No secrets in Git and no new dependency without explicit justification/provenance.
-
-## Next actions
-1. Open a draft PR for this bounded contract.
-2. Verify Godot CI on the exact PR head.
-3. If green and contract review is clean, promote deliberately.
-4. Only then begin Bubble #1 and toothpick hit integration.
