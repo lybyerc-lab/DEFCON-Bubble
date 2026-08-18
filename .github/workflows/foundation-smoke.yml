@@ -1,0 +1,44 @@
+name: Foundation Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  godot-foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GODOT_VERSION: 4.7.1-stable
+      GODOT_ZIP: Godot_v4.7.1-stable_linux.x86_64.zip
+
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download pinned Godot editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}"
+          curl -fL --retry 3 -o "${GODOT_ZIP}" "${base}/${GODOT_ZIP}"
+          curl -fL --retry 3 -o SHA512-SUMS.txt "${base}/SHA512-SUMS.txt"
+          grep " ${GODOT_ZIP}$" SHA512-SUMS.txt | sha512sum -c -
+          unzip -q "${GODOT_ZIP}" -d .godot-ci
+          chmod +x ".godot-ci/Godot_v4.7.1-stable_linux.x86_64"
+
+      - name: Verify engine pin
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --version
+
+      - name: Import project
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --import
+
+      - name: Run foundation contract smoke test
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/foundation_smoke.gd
+
+      - name: Boot main scene headlessly
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --quit-after 3
