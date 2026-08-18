@@ -17,3 +17,7 @@ Prototype destruction uses modular damageable castle chunks. Do not begin with v
 ## DB-DEC-004 Code navigation
 
 Use semantic anchors and labels where they improve navigation, debugging, ownership, refactoring, or agent handoff. Code structure remains authoritative.
+
+## DB-DEC-005 Damage boundary
+
+All gameplay hits cross a shared typed `DamageRequest` contract. The routing component may validate and forward a request but does not own health, resistance, death, destruction, rewards, or VFX. The receiving gameplay domain owns the outcome. Damage categories begin with `PIERCE` and `IMPACT`; expanding that vocabulary requires an explicit contract and test change.

@@ -1,4 +1,4 @@
-name: Foundation Smoke
+name: Godot Verify
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  godot-foundation:
+  godot-verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -39,6 +39,9 @@ jobs:
 
       - name: Run foundation contract smoke test
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/foundation_smoke.gd
+
+      - name: Run damage contract smoke test
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/damage_contract_smoke.gd
 
       - name: Boot main scene headlessly
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --quit-after 3

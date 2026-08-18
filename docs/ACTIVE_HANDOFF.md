@@ -1,38 +1,39 @@
 # Active handoff
 
-## Current milestone
-Foundation 0
+## Recovery rule
+Resolve GitHub state first. Do not hardcode this file's own live HEAD.
 
-## Current branch / PR
-`agent/foundation-0` / PR #1
+- If PR #2 (`combat: establish typed damage contract`) is still open, verify its exact live head and finish that promotion before starting gameplay integration.
+- If PR #2 is merged, the damage contract is canonical and the next bounded milestone is the first POP proof.
 
-Live head SHA is always resolved from GitHub/Git at session start. Do not hardcode the branch's own current HEAD in this file because editing this file creates a new HEAD.
+## Canonical baseline
+Foundation 0 is accepted on `main`.
 
-Last verified implementation SHA: `50ec4846e669e7e036cf78e07acb119fef6d00cb`
-Verified by Foundation Smoke run `32083253342`.
+The shared damage boundary is:
+- `DamageRequest`: source ID, target ID, positive amount, typed damage category, impact position.
+- `DamageReceiver`: validates/routs and emits the request; owns no health, resistance, death, destruction, reward, or presentation outcome.
+- Initial damage categories: `PIERCE` and `IMPACT`.
 
-## Current acceptance target
-Merge Foundation 0 only after the exact live PR head passes the pinned Godot 4.7.1 CI smoke workflow.
+## Next bounded milestone
+`[DB:COMBAT:POP]` first POP proof.
 
-## What is true now
-- Godot baseline is 4.7.1 stable with GDScript.
-- Repository is public, not open source, with an explicit rights notice.
-- `GameRoot -> BeachArena` boots without production gameplay.
-- Named input/collision conventions, semantic code anchors, repo memory, system map, decisions, and CI exist.
-- Last verified implementation SHA passed checksum verification, engine pin, import, foundation contract, and headless boot.
-- CI checkout was upgraded to a SHA-pinned current action to remove the Node 20 deprecation warning; the live PR head requires fresh proof after that change.
+Prove one basic bubble can receive a `PIERCE` request from a toothpick hit and own its resulting pop/despawn behavior through the shared damage boundary.
 
-## What is blocked
-Nothing known. Acceptance depends only on green CI for the exact live PR head.
+Keep the first POP proof narrow: one basic bubble, one toothpick projectile/hit path, deterministic test coverage, and satisfying-but-minimal pop feedback only after gameplay truth works.
 
-## Must not change
-- No production bubbles, weapons, castle damage, waves, upgrades, saves, or progression in Foundation 0.
-- No secrets in Git.
-- No new dependency without explicit justification/provenance.
+## Must not drift into
+- waves or procedural spawning
+- castle damage
+- upgrade systems
+- repair systems
+- save/meta progression
+- large weapon trees
+- pooling before profiling
+- generalized enemy frameworks beyond what Bubble #1 actually needs
+
+## Standing laws
+- Targets own resistance, health, death, and destruction decisions.
+- Presentation reacts to gameplay truth; it never becomes damage authority.
 - Keep `main` buildable.
-
-## Next actions
-1. Resolve the live PR #1 head SHA from GitHub.
-2. Verify Foundation Smoke for that exact SHA.
-3. If green, merge PR #1 and verify `main`.
-4. Start `[DB:COMBAT:DAMAGE]`: common damage request contract plus test target before Bubble #1.
+- Automation proves; promotion is deliberate.
+- No secrets in Git and no new dependency without explicit justification/provenance.
