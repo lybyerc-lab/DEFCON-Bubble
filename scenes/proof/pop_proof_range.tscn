@@ -1,7 +1,49 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/proof/pop_proof_range.gd" id="1_range"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/basic_bubble.tscn" id="2_bubble"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_normal"]
+bg_color = Color(0.87, 0.31, 0.09, 0.96)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.83, 0.36, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.16, 0.08, 0.03, 0.42)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_hover"]
+bg_color = Color(0.98, 0.4, 0.1, 0.98)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.91, 0.52, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.16, 0.08, 0.03, 0.46)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_pressed"]
+bg_color = Color(0.67, 0.2, 0.06, 1)
+border_width_left = 5
+border_width_top = 7
+border_width_right = 5
+border_width_bottom = 3
+border_color = Color(1, 0.74, 0.24, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.12, 0.05, 0.02, 0.32)
+shadow_size = 3
 
 [node name="PopProofRange" type="Node3D"]
 script = ExtResource("1_range")
@@ -44,5 +86,11 @@ anchor_right = 0.98
 anchor_bottom = 0.96
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 38
-text = "FIRE"
+theme_override_colors/font_color = Color(1, 0.98, 0.86, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.94, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.94, 0.74, 1)
+theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBox_fire_normal")
+theme_override_styles/hover = SubResource("StyleBox_fire_hover")
+theme_override_styles/pressed = SubResource("StyleBox_fire_pressed")
+text = "FIRE!"
