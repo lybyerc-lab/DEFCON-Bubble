@@ -6,6 +6,8 @@ extends Area3D
 
 signal popped(bubble_id: StringName)
 
+const POP_LINGER_SECONDS: float = 0.18
+
 @export_category("Bubble Identity")
 @export var bubble_id: StringName = &"enemy:basic_bubble:proof"
 @export_category("Bubble Durability")
@@ -13,7 +15,6 @@ signal popped(bubble_id: StringName)
 
 @onready var damage_receiver: DamageReceiver = $DamageReceiver
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
-@onready var visual: Node3D = $Visual
 
 var _health: float
 var _is_popped: bool = false
@@ -55,8 +56,7 @@ func _pop() -> void:
 	collision_shape.set_deferred("disabled", true)
 	popped.emit(bubble_id)
 
-	# Minimal POP juice stays presentation-only: gameplay truth is already settled.
-	var tween: Tween = create_tween()
-	tween.tween_property(visual, "scale", Vector3.ONE * 1.35, 0.05)
-	tween.tween_property(visual, "scale", Vector3.ONE * 0.05, 0.07)
-	tween.finished.connect(queue_free)
+	# Gameplay owns the despawn clock. Presentation may react inside this window,
+	# but it cannot decide whether the bubble is dead or keep it alive.
+	var pop_timer: SceneTreeTimer = get_tree().create_timer(POP_LINGER_SECONDS)
+	pop_timer.timeout.connect(queue_free)
