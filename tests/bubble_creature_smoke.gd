@@ -29,8 +29,12 @@ func _run() -> void:
 
 	_check(basic.get_node_or_null("Visual/CreatureRig/LeftLegPivot/Foot") != null, "Basic Bubble must have a left leg and foot")
 	_check(basic.get_node_or_null("Visual/CreatureRig/RightLegPivot/Foot") != null, "Basic Bubble must have a right leg and foot")
-	_check(basic.get_node_or_null("Visual/CreatureRig/Face/LeftEye") != null, "Basic Bubble must have a readable face")
-	_check(basic.get_node_or_null("Visual/CreatureRig/LeftHorn") != null, "Basic Bubble must carry the monster silhouette")
+	_check(basic.get_node_or_null("Visual/CreatureRig/Face") == null, "Bubble Creature must remain faceless")
+	_check(basic.get_node_or_null("Visual/CreatureRig/LeftHorn/TipBubble") != null, "left horn must be built from bubbles")
+	_check(basic.get_node_or_null("Visual/CreatureRig/RightHorn/TipBubble") != null, "right horn must be built from bubbles")
+	_check(basic.get_node_or_null("Visual/CreatureRig/LeftLegPivot/LowerBubble") != null, "legs must be built from bubble segments")
+	var body_mesh: MeshInstance3D = basic.get_node("Visual/BubbleMesh") as MeshInstance3D
+	_check(body_mesh.scale.y > body_mesh.scale.x, "main bubble body must use a less-round elongated silhouette")
 	_check(fast.get_node_or_null("Visual/CreatureRig/RightLegPivot/Foot") != null, "Fast Bubble must inherit the bipedal rig")
 	_check(is_equal_approx(basic.advance_speed_mps, 1.25), "creature presentation must not change Basic speed")
 	_check(is_equal_approx(fast.advance_speed_mps, 2.25), "creature presentation must not change Fast speed")

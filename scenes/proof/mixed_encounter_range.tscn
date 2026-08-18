@@ -130,11 +130,11 @@ shadow_size = 3
 [node name="MixedEncounterRange" type="Node3D"]
 script = ExtResource("1_range")
 
-[node name="ProjectileOrigin" type="Marker3D" parent="."]
-position = Vector3(-5, 1, 0)
-
 [node name="CastleChunk" parent="." instance=ExtResource("2_castle")]
-position = Vector3(-3.2, 0.7, 0)
+position = Vector3(-4.4, 0.7, 0)
+
+[node name="ProjectileOrigin" type="Marker3D" parent="CastleChunk"]
+position = Vector3(0.25, 0.82, 0)
 
 [node name="MixedEncounter" type="Node3D" parent="."]
 script = ExtResource("3_encounter")

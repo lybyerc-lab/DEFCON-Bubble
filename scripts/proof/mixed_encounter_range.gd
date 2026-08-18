@@ -7,7 +7,7 @@ const TOOTHPICK_SCENE: PackedScene = preload("res://scenes/weapons/toothpick_pro
 const FIRE_ACTION: StringName = &"fire_primary"
 
 @onready var encounter: MixedEncounter = $MixedEncounter
-@onready var projectile_origin: Marker3D = $ProjectileOrigin
+@onready var projectile_origin: Marker3D = $CastleChunk/ProjectileOrigin
 @onready var touch_controls: Control = $TouchHUD/TouchControls
 @onready var fire_button: Button = $TouchHUD/TouchControls/FireButton
 @onready var reset_button: Button = $TouchHUD/TouchControls/ResetButton
