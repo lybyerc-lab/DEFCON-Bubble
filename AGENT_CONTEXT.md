@@ -4,7 +4,9 @@ Read this after resolving live GitHub repository state.
 
 ## Pitch
 
-A 2.5D beach-defense game. The player holds the left side and protects a sandcastle from bubble monsters advancing from the right, beginning with toothpick weapons.
+DEFCON BUBBLE is a mobile-first 3D/2.5D beach-defense game. The player holds the left side and protects a sandcastle from bubble monsters advancing from the right, beginning with toothpick weapons.
+
+The intended shipped experience is a grand native mobile game. Desktop is a development, debugging, profiling, and automation environment. Web builds are rapid-access previews, not the final product.
 
 ## Locked laws
 
@@ -16,12 +18,24 @@ A 2.5D beach-defense game. The player holds the left side and protects a sandcas
 - Castle damage is visible and localized.
 - Weapons and sand/castle defenses upgrade.
 - Escalation from peaceful beach to absurdly serious beach warfare is part of the tone.
+- Native mobile is the primary product target.
+- Mobile-first does not mean reduced ambition. Preserve the grand beach-war fantasy through disciplined staging, scalable presentation, and measured performance work.
+
+## Platform law
+
+- The phone is a first-class design and acceptance surface, not a later port target.
+- Touch input, phone-scale readability, safe areas, pause/resume behavior, audio interruption, thermal pressure, memory use, and performance are first-class concerns.
+- Desktop remains valuable for authoring and proof, but desktop-only success is not sufficient acceptance for player-facing mobile behavior.
+- Web builds exist to make exact-source previews easy to open on a phone. They are disposable delivery infrastructure, not gameplay architecture.
+- The initial native storefront/platform order is not locked yet. Do not silently turn that open question into an iOS-only or Android-only assumption.
 
 ## Technical baseline
 
-- Godot 4.7.1 stable
-- GDScript
-- Desktop-first prototype
+- Godot 4.7.1 stable.
+- GDScript.
+- Desktop development uses the existing Forward+ default.
+- Native mobile uses Godot's Mobile renderer override.
+- Web preview uses the Compatibility renderer override.
 - Modular castle chunks are the current destruction approach.
 - Data-first definitions with stable IDs.
 - Composition over deep inheritance.
@@ -30,19 +44,22 @@ A 2.5D beach-defense game. The player holds the left side and protects a sandcas
 
 ## Current development edge
 
-Foundation 0 and `[DB:COMBAT:DAMAGE]` are accepted. The next bounded gameplay proof is `[DB:COMBAT:POP]`: one basic bubble, one toothpick hit path, and target-owned pop/despawn behavior through the shared damage contract.
+Foundation 0 and `[DB:COMBAT:DAMAGE]` are accepted. The bounded gameplay edge remains `[DB:COMBAT:POP]`: one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, and a phone-accessible feel check through the shared damage contract.
 
-Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
+Resolve live GitHub state before assuming the status of any POP branch or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
 ## Semantic anchors
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:DIRECTOR]`, `[DB:DEBUG:SEED]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:DIRECTOR]`, `[DB:DEBUG:SEED]`.
 
 ## Do not
 
 - Broaden scope silently.
+- Treat desktop-only behavior as sufficient acceptance when the feature is player-facing on mobile.
+- Couple touch UI directly to gameplay truth when an input/action boundary can keep them separate.
+- Reduce the core fantasy merely to avoid doing profiling, budgeting, or scalable presentation work.
 - Add dependencies casually.
 - Introduce giant global managers or a universal event bus.
 - Put gameplay truth in UI, VFX, audio, or animation.

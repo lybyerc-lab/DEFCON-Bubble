@@ -45,6 +45,7 @@ common/physics_ticks_per_second=60
 
 [rendering]
 
-; [DB:PLATFORM:WEB_RENDERER]
-; WebGL 2 requires Godot's Compatibility renderer. Desktop keeps Forward+.
+; [DB:PLATFORM:RENDERER_POLICY]
+; Desktop development keeps Forward+. Native mobile and Web use platform overrides.
+renderer/rendering_method.mobile="mobile"
 renderer/rendering_method.web="gl_compatibility"
