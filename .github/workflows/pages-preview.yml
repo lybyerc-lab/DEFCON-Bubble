@@ -32,11 +32,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           payload="$(jq -n \
             --arg state "pending" \
+            --arg target_url "${run_url}" \
             --arg description "Building exact-source DEFCON BUBBLE phone preview" \
             --arg context "pages-preview" \
-            '{state:$state,description:$description,context:$context}')"
+            '{state:$state,target_url:$target_url,description:$description,context:$context}')"
           curl -fsSL \
             -X POST \
             -H "Authorization: Bearer ${GH_TOKEN}" \
@@ -96,12 +98,14 @@ jobs:
           elif [ "${UPLOAD_OUTCOME}" != "success" ]; then
             stage="upload-pages"
           fi
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           for context in "pages-preview" "pages-preview-failure/${stage}"; do
             payload="$(jq -n \
               --arg state "failure" \
+              --arg target_url "${run_url}" \
               --arg description "Pages preview failed during ${stage}" \
               --arg context "${context}" \
-              '{state:$state,description:$description,context:$context}')"
+              '{state:$state,target_url:$target_url,description:$description,context:$context}')"
             curl -fsSL \
               -X POST \
               -H "Authorization: Bearer ${GH_TOKEN}" \
@@ -157,12 +161,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           for context in "pages-preview" "pages-preview-failure/deploy-pages"; do
             payload="$(jq -n \
               --arg state "failure" \
+              --arg target_url "${run_url}" \
               --arg description "Pages preview deployment failed" \
               --arg context "${context}" \
-              '{state:$state,description:$description,context:$context}')"
+              '{state:$state,target_url:$target_url,description:$description,context:$context}')"
             curl -fsSL \
               -X POST \
               -H "Authorization: Bearer ${GH_TOKEN}" \
