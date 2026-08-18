@@ -2,127 +2,236 @@ extends Node3D
 
 # [DB:PRESENTATION:POP_FX]
 # Reacts to Bubble #1's authoritative popped signal. This node owns only
-# presentation: membrane rupture, film ripple, mist, and placeholder audio.
-# Gameplay still owns death, collision shutdown, and despawn timing.
+# presentation: puncture-side membrane rupture, wet film remnants, mist, and audio.
+# Gameplay still owns damage outcomes, death, collision shutdown, and despawn timing.
 
 const POP_SOUND_SECONDS: float = 0.09
 const POP_SAMPLE_RATE: int = 22050
-const MIST_DISTANCE: float = 0.5
-const MIST_DURATION: float = 0.12
-const MIST_DIRECTIONS := [
-	Vector3(1.0, 0.35, 0.0),
-	Vector3(0.9, 0.7, 0.15),
-	Vector3(0.55, 1.0, -0.1),
-	Vector3(0.15, 0.9, 0.55),
-	Vector3(-0.2, 0.75, -0.65),
-	Vector3(-0.55, 0.45, 0.4),
-	Vector3(-0.75, 0.15, -0.2),
-	Vector3(0.45, 0.3, 0.85),
-	Vector3(0.25, 0.15, -0.9),
-	Vector3(-0.1, 1.0, 0.15),
+const BUBBLE_FILM_RADIUS: float = 0.58
+const ARC_SEGMENTS: int = 12
+const ARC_DURATION: float = 0.105
+const MIST_DURATION: float = 0.135
+const MIST_ANGLE_OFFSETS := [
+	-0.28,
+	0.18,
+	-0.62,
+	0.52,
+	-0.96,
+	0.88,
+	-1.28,
+	1.22,
+	-1.58,
+	1.54,
+	-1.92,
+	1.86,
 ]
 
 @onready var bubble: BasicBubble = get_parent() as BasicBubble
 @onready var visual: Node3D = get_node("../Visual") as Node3D
+@onready var damage_receiver: DamageReceiver = get_node("../DamageReceiver") as DamageReceiver
 @onready var flash_shell: MeshInstance3D = $FlashShell
 @onready var pop_audio: AudioStreamPlayer3D = $PopAudio
+
+var _impact_direction: Vector3 = Vector3.LEFT
+var _impact_local: Vector3 = Vector3.LEFT * BUBBLE_FILM_RADIUS
 
 
 func _ready() -> void:
 	assert(bubble != null, "[DB:PRESENTATION:POP_FX] BasicBubble parent is required.")
 	assert(visual != null, "[DB:PRESENTATION:POP_FX] Bubble Visual is required.")
+	assert(damage_receiver != null, "[DB:PRESENTATION:POP_FX] DamageReceiver is required.")
 	assert(flash_shell != null, "[DB:PRESENTATION:POP_FX] FlashShell is required.")
 	assert(pop_audio != null, "[DB:PRESENTATION:POP_FX] PopAudio is required.")
+
+	# The old full-shell echo is intentionally retired. A complete expanding ring
+	# reads as an energy shield; soap film should tear asymmetrically from the hit.
 	flash_shell.visible = false
 	flash_shell.transparency = 1.0
-	flash_shell.material_override = _build_film_material(Color(0.78, 0.95, 1.0, 0.24))
 	pop_audio.volume_db = -5.0
+
+	damage_receiver.damage_requested.connect(_on_damage_requested)
 	bubble.popped.connect(_on_bubble_popped)
 
 
+func _on_damage_requested(request: DamageRequest) -> void:
+	# Presentation observes the canonical hit position without owning the damage result.
+	# Cache only the screen-readable XY direction so the rupture starts where the
+	# toothpick actually enters the bubble.
+	if request == null:
+		return
+
+	var local_impact: Vector3 = to_local(request.impact_position)
+	var flat_impact := Vector3(local_impact.x, local_impact.y, 0.0)
+	if flat_impact.length_squared() <= 0.0001:
+		return
+
+	_impact_direction = flat_impact.normalized()
+	_impact_local = _impact_direction * BUBBLE_FILM_RADIUS
+
+
 func _on_bubble_popped(_bubble_id: StringName) -> void:
-	_play_membrane_rupture()
-	_play_film_echo()
-	_spawn_film_ripple()
+	_play_puncture_dimple()
+	_spawn_puncture_glint()
+	_spawn_membrane_arcs()
 	_spawn_mist()
 	_play_pop_audio()
 
 
-func _play_membrane_rupture() -> void:
-	# A soap film dimples at the puncture and then ceases to be a closed surface.
-	# Do not shrink the whole sphere to zero; that reads as rubber/balloon material.
-	visual.scale = Vector3(0.86, 1.07, 1.07)
-	var rupture_tween: Tween = create_tween()
-	rupture_tween.tween_property(visual, "scale", Vector3(0.94, 1.03, 1.03), 0.026).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	rupture_tween.tween_callback(_hide_bubble_visual)
+func _play_puncture_dimple() -> void:
+	# [DB:PRESENTATION:POP_MEMBRANE]
+	# Hold the intact silhouette for a tiny puncture beat, then remove the closed
+	# surface. The slight center shift moves away from the puncture instead of
+	# inflating or shrinking like rubber.
+	visual.scale = Vector3(0.90, 1.035, 1.0)
+	visual.position = -_impact_direction * 0.026
+
+	var dimple_tween: Tween = create_tween()
+	dimple_tween.tween_property(visual, "scale", Vector3(0.965, 1.012, 1.0), 0.022).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	dimple_tween.tween_callback(_hide_bubble_visual)
 
 
 func _hide_bubble_visual() -> void:
 	visual.visible = false
 
 
-func _play_film_echo() -> void:
-	# A faint near-stationary ghost of the membrane sells disappearing film,
-	# rather than an exploding solid shell.
-	flash_shell.visible = true
-	flash_shell.scale = Vector3.ONE * 0.96
-	flash_shell.transparency = 0.08
+func _spawn_puncture_glint() -> void:
+	# A tiny wet highlight marks the puncture for only a few frames. It must never
+	# become a full halo or starburst.
+	var glint := MeshInstance3D.new()
+	var glint_mesh := SphereMesh.new()
+	glint_mesh.radius = 0.034
+	glint_mesh.height = 0.068
+	glint.mesh = glint_mesh
+	glint.position = _impact_local + Vector3(0.0, 0.0, 0.035)
+	glint.material_override = _build_film_material(Color(0.92, 0.99, 1.0, 0.58))
+	add_child(glint)
 
-	var scale_tween: Tween = create_tween()
-	scale_tween.tween_property(flash_shell, "scale", Vector3.ONE * 1.09, 0.065).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
-	var fade_tween: Tween = create_tween()
-	fade_tween.tween_property(flash_shell, "transparency", 1.0, 0.065).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-
-
-func _spawn_film_ripple() -> void:
-	# [DB:PRESENTATION:POP_FILM_RIPPLE]
-	# Two very thin translucent rings suggest the collapsing edge of soap film.
-	_spawn_ring(Color(0.72, 0.95, 1.0, 0.46), Vector3(0.78, 0.72, 0.78), Vector3(1.48, 1.36, 1.48), 0.11)
-	_spawn_ring(Color(1.0, 0.78, 0.96, 0.28), Vector3(0.72, 0.78, 0.72), Vector3(1.28, 1.42, 1.28), 0.095)
-
-
-func _spawn_ring(color: Color, start_scale: Vector3, end_scale: Vector3, duration: float) -> void:
-	var ring: MeshInstance3D = MeshInstance3D.new()
-	var ring_mesh: TorusMesh = TorusMesh.new()
-	ring_mesh.inner_radius = 0.56
-	ring_mesh.outer_radius = 0.61
-	ring_mesh.ring_segments = 8
-	ring_mesh.rings = 32
-	ring.mesh = ring_mesh
-	ring.rotation_degrees = Vector3(90.0, 0.0, 0.0)
-	ring.scale = start_scale
-	ring.material_override = _build_film_material(color)
-	add_child(ring)
-
-	var scale_tween: Tween = create_tween()
-	scale_tween.tween_property(ring, "scale", end_scale, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	var drift_tween: Tween = create_tween()
+	drift_tween.tween_property(glint, "position", glint.position - (_impact_direction * 0.035), 0.045).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	var fade_tween: Tween = create_tween()
-	fade_tween.tween_property(ring, "transparency", 1.0, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	fade_tween.tween_property(glint, "transparency", 1.0, 0.045).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+
+func _spawn_membrane_arcs() -> void:
+	# [DB:PRESENTATION:POP_FILM_ARCS]
+	# Partial irregular ribbons represent the last wet edges of the membrane.
+	# Their center of mass lives opposite the puncture and retracts farther away
+	# from the hole. No complete circles are generated in this effect.
+	var impact_angle: float = atan2(_impact_direction.y, _impact_direction.x)
+	var far_side_angle: float = impact_angle + PI
+	var retract_axis: Vector3 = -_impact_direction
+	var tangent := Vector3(-retract_axis.y, retract_axis.x, 0.0)
+
+	_spawn_arc(
+		far_side_angle - 1.18,
+		far_side_angle - 0.12,
+		0.56,
+		0.024,
+		0.17,
+		Color(0.82, 0.97, 1.0, 0.46),
+		retract_axis * 0.13 + tangent * 0.035,
+		ARC_DURATION,
+	)
+	_spawn_arc(
+		far_side_angle + 0.20,
+		far_side_angle + 1.42,
+		0.585,
+		0.019,
+		0.61,
+		Color(0.95, 0.91, 1.0, 0.34),
+		retract_axis * 0.16 - tangent * 0.028,
+		ARC_DURATION * 0.92,
+	)
+	_spawn_arc(
+		far_side_angle - 0.08,
+		far_side_angle + 0.52,
+		0.535,
+		0.016,
+		1.07,
+		Color(0.86, 1.0, 0.94, 0.28),
+		retract_axis * 0.19 + Vector3(0.0, -0.025, 0.0),
+		ARC_DURATION * 0.80,
+	)
+
+
+func _spawn_arc(
+	start_angle: float,
+	end_angle: float,
+	radius: float,
+	half_width: float,
+	phase: float,
+	color: Color,
+	drift: Vector3,
+	duration: float,
+) -> void:
+	var arc := MeshInstance3D.new()
+	var arc_mesh := ImmediateMesh.new()
+	var arc_material: StandardMaterial3D = _build_film_material(color)
+	arc_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	arc_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP, arc_material)
+	for segment: int in range(ARC_SEGMENTS + 1):
+		var t: float = float(segment) / float(ARC_SEGMENTS)
+		var angle: float = lerpf(start_angle, end_angle, t)
+		var wobble: float = sin((t * 2.4 + phase) * TAU) * 0.014
+		wobble += sin((t * 4.7 + phase * 0.63) * TAU) * 0.006
+		var local_radius: float = radius + wobble
+		var radial := Vector3(cos(angle), sin(angle), 0.0)
+		var center := radial * local_radius
+		center.z = 0.035 + (sin((t + phase) * PI) * 0.014)
+		var width_variation: float = half_width * (0.72 + 0.28 * sin((t + 0.18) * PI))
+
+		arc_mesh.surface_add_vertex(center + radial * width_variation)
+		arc_mesh.surface_add_vertex(center - radial * width_variation)
+	arc_mesh.surface_end()
+
+	arc.mesh = arc_mesh
+	add_child(arc)
+
+	var retract_tween: Tween = create_tween()
+	retract_tween.tween_property(arc, "position", drift, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	var scale_tween: Tween = create_tween()
+	scale_tween.tween_property(arc, "scale", Vector3(0.91, 0.91, 0.91), duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	var fade_tween: Tween = create_tween()
+	fade_tween.tween_property(arc, "transparency", 1.0, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 
 func _spawn_mist() -> void:
-	# Small, short-travel droplets read as suspended liquid film instead of shrapnel.
-	var mist_material: StandardMaterial3D = _build_film_material(Color(0.83, 0.96, 1.0, 0.48))
-	for index: int in range(MIST_DIRECTIONS.size()):
-		var direction: Vector3 = MIST_DIRECTIONS[index]
-		var droplet: MeshInstance3D = MeshInstance3D.new()
-		var droplet_mesh: SphereMesh = SphereMesh.new()
-		var radius: float = 0.018 + (float(index % 3) * 0.005)
+	# [DB:PRESENTATION:POP_MIST]
+	# Microdroplets begin along the tear path, travel only a short distance, and
+	# sag downward. That gravity bias helps them read as liquid rather than sparks.
+	var impact_angle: float = atan2(_impact_direction.y, _impact_direction.x)
+	var retract_axis: Vector3 = -_impact_direction
+	var tangent := Vector3(-retract_axis.y, retract_axis.x, 0.0)
+	var mist_material: StandardMaterial3D = _build_film_material(Color(0.88, 0.98, 1.0, 0.42))
+
+	for index: int in range(MIST_ANGLE_OFFSETS.size()):
+		var tear_angle: float = impact_angle + MIST_ANGLE_OFFSETS[index]
+		var radial := Vector3(cos(tear_angle), sin(tear_angle), 0.0)
+		var droplet := MeshInstance3D.new()
+		var droplet_mesh := SphereMesh.new()
+		var radius: float = 0.012 + float(index % 3) * 0.004
 		droplet_mesh.radius = radius
 		droplet_mesh.height = radius * 2.0
 		droplet.mesh = droplet_mesh
 		droplet.material_override = mist_material
-		droplet.position = direction.normalized() * 0.08
-		droplet.scale = Vector3.ONE
-		droplet.transparency = 0.08
+		droplet.position = radial * (BUBBLE_FILM_RADIUS * (0.88 + float(index % 2) * 0.05))
+		droplet.position.z = (float((index % 5) - 2) * 0.018)
 		add_child(droplet)
 
-		var distance_scale: float = 0.8 + (float(index % 4) * 0.08)
-		var target_position: Vector3 = direction.normalized() * MIST_DISTANCE * distance_scale
-		var duration: float = MIST_DURATION * (0.88 + float(index % 3) * 0.08)
+		var sideways: float = (float((index % 4) - 1) - 0.5) * 0.032
+		var retract_distance: float = 0.10 + float(index % 4) * 0.018
+		var gravity_drop: float = 0.055 + float(index % 3) * 0.018
+		var depth_drift: float = float((index % 3) - 1) * 0.025
+		var target_position: Vector3 = droplet.position
+		target_position += retract_axis * retract_distance
+		target_position += tangent * sideways
+		target_position += Vector3(0.0, -gravity_drop, depth_drift)
 
+		var duration: float = MIST_DURATION * (0.82 + float(index % 4) * 0.055)
 		var move_tween: Tween = create_tween()
 		move_tween.tween_property(droplet, "position", target_position, duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
@@ -131,7 +240,7 @@ func _spawn_mist() -> void:
 
 
 func _build_film_material(color: Color) -> StandardMaterial3D:
-	var material: StandardMaterial3D = StandardMaterial3D.new()
+	var material := StandardMaterial3D.new()
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.albedo_color = color
@@ -146,15 +255,16 @@ func _play_pop_audio() -> void:
 
 func _build_pop_stream() -> AudioStreamWAV:
 	# [DB:PRESENTATION:POP_AUDIO]
-	# A soap-film snap should be mostly a tiny broadband air burst with almost no
-	# ringing body. Stable sine overtones read as glass, so keep tonal energy low.
-	var stream: AudioStreamWAV = AudioStreamWAV.new()
+	# Keep pass #2's sound recipe unchanged for the next phone test so the visual
+	# correction and audio judgment remain separable. The user will evaluate this
+	# with device volume enabled on the next pass.
+	var stream := AudioStreamWAV.new()
 	stream.format = AudioStreamWAV.FORMAT_16_BITS
 	stream.mix_rate = POP_SAMPLE_RATE
 	stream.stereo = false
 
 	var frame_count: int = int(POP_SAMPLE_RATE * POP_SOUND_SECONDS)
-	var data: PackedByteArray = PackedByteArray()
+	var data := PackedByteArray()
 	data.resize(frame_count * 2)
 	var previous_noise: float = 0.0
 
