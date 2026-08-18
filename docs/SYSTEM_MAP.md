@@ -20,6 +20,7 @@
 - Projectile owns travel and hit request only.
 - Enemy owns its behavior and requests damage.
 - Castle owns castle chunks, localized destruction, and survival evaluation.
+- `CastleChunk` currently proves local `IMPACT` filtering, health, collision shutdown, and destruction truth for one modular chunk; its presentation observer only renders damage.
 - WaveDirector will own wave state/timing.
 - HUD renders and requests choices; it never becomes gameplay truth.
 - Platform lifecycle adapters will own focus/background/resume and system-interruption translation without owning run rules.
