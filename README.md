@@ -6,7 +6,7 @@ DEFCON BUBBLE is a 2.5D beach-defense game where a lone defender protects a sand
 
 ## Project status
 
-Foundation 0. No production gameplay exists yet.
+Foundation 0 is accepted. Active milestone: the shared damage contract before Bubble #1.
 
 ## Technical baseline
 
@@ -24,16 +24,17 @@ Foundation 0. No production gameplay exists yet.
 - Presentation may react to gameplay but never owns gameplay truth.
 - Prefer composition, typed contracts, stable IDs, and small responsibilities.
 - Use searchable semantic anchors such as `[DB:CASTLE:CHUNK]` where they materially improve navigation.
-- `main` becomes a buildable protected baseline after Foundation 0 is accepted.
+- Keep `main` buildable; automation proves and promotion remains deliberate.
 
 ## Start
 
 Open the repository in Godot 4.7.1 and run the project.
 
-Foundation smoke test:
+Headless verification:
 
 ```bash
 godot --headless --path . --script res://tests/foundation_smoke.gd
+godot --headless --path . --script res://tests/damage_contract_smoke.gd
 ```
 
 ## Project truth

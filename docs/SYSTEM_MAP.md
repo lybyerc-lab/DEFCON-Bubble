@@ -19,3 +19,12 @@
 - Castle owns castle chunks, localized destruction, and survival evaluation.
 - WaveDirector will own wave state/timing.
 - HUD renders and requests choices; it never becomes gameplay truth.
+
+## Damage contract
+
+- `DamageRequest` carries source ID, target ID, positive amount, typed damage category, and impact position.
+- Requests are construct-once messages. Callers must not mutate a request after dispatch.
+- `DamageReceiver` validates request structure and target routing, then emits the typed request to the owning gameplay domain.
+- `DamageReceiver` owns no health, resistance, death, destruction, reward, or presentation behavior.
+- A projectile or enemy may request damage; the receiving target domain decides the outcome.
+- Initial damage categories are `PIERCE` and `IMPACT`. New categories require an explicit contract/test update rather than ad-hoc strings.
