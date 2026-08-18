@@ -17,8 +17,9 @@ Keep this file short. It should preserve judgment, emphasis, risks, and creative
 - Browser-on-phone evidence is excellent for rapid feel review; representative native-device evidence becomes required before player-facing behavior is considered platform-ready.
 - The project has crossed from architecture setup into accepted gameplay proof. Foundation, typed damage, and the first toothpick-to-bubble POP are now proven on `main`.
 - Treat the accepted POP as a reusable contract, not a standing invitation for more polish. Reopen it only for new player evidence, a measured defect, or production-scale requirements.
-- The next gameplay question is now `[DB:CASTLE:IMPACT]`: does one approaching bubble create readable defensive urgency by reaching and visibly damaging one modular sandcastle chunk if the player fails to pop it?
-- Protect this proof from becoming waves, full castle orchestration, navigation, repair, upgrades, progression, or a generalized enemy framework. One bubble and one chunk are enough to answer the question.
+- The accepted castle-impact proof showed that failure visibly damages the castle and successful defense preserves it. Starting-distance tuning was deliberately deferred until several bubbles could expose the actual rhythm.
+- The next gameplay question is `[DB:WAVE:FIRST_DEFENSE]`: is one short, replayable three-bubble defense readable and fun on a phone? Judge pressure, firing rhythm, approach spacing, and whether the win/loss read lands without explanation.
+- Protect this proof from becoming a generalized wave framework, target-priority claim, multiple lanes or chunks, navigation, repair, upgrades, progression, rewards, or new content. Three identical bubbles in one lane prove encounter rhythm, not meaningful tactical target choice.
 - Gameplay truth comes first; juice follows immediately after the truth works. Player feel remains a real gate, as the POP audio acceptance demonstrated.
 - Prefer a proven, appropriately licensed asset when a commodity sound, image, font, or similar resource already meets the need. Reserve custom work for DEFCON BUBBLE's identity and project-specific problems; always record provenance and license.
 - Keep the humble beach identity visible even as intensity grows. Serious systems should serve the absurd beach-defense fantasy, not sand off its personality.

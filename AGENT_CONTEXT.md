@@ -44,9 +44,9 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 ## Current development edge
 
-Foundation 0, `[DB:COMBAT:DAMAGE]`, and `[DB:COMBAT:POP]` are accepted on `main`. The accepted POP proof establishes one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
+Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, and `[DB:CASTLE:IMPACT]` are accepted on `main`. Those proofs establish one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, one modular castle chunk with local health/destruction, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
 
-The current bounded milestone is `[DB:CASTLE:IMPACT]`: one Bubble #1 advances toward one modular sandcastle chunk, requests one typed `IMPACT` on contact, and the chunk owns localized health, damage, collision, and destruction truth. This is a single-contact proof, not a wave, castle system, repair loop, or generalized enemy framework.
+The current bounded milestone is `[DB:WAVE:FIRST_DEFENSE]`: exactly three ordinary BasicBubbles spawn from one right-side point at a fixed stagger and attack one existing CastleChunk. A proof-specific wave authority owns only READY/RUNNING/WON/LOST state, exact spawn timing/count, and terminal evaluation. This is one fixed encounter, not a reusable wave framework, content pipeline, or progression system.
 
 Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 

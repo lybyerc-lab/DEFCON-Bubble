@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/proof/pop_proof_range.tscn" id="1_pop_proof"]
+[ext_resource type="PackedScene" path="res://scenes/proof/first_defense_range.tscn" id="1_first_defense"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 size = Vector2(24, 10)
@@ -10,7 +10,7 @@ size = Vector2(24, 10)
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_ground")
 
-[node name="PopProofRange" parent="." instance=ExtResource("1_pop_proof")]
+[node name="FirstDefenseRange" parent="." instance=ExtResource("1_first_defense")]
 
 [node name="Camera3D" type="Camera3D" parent="."]
 position = Vector3(0, 6, 12)
