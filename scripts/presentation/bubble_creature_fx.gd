@@ -6,10 +6,11 @@ extends Node3D
 # only the face/limb pose; gameplay movement, collision, damage, POP, and despawn
 # remain with BasicBubble.
 
-const STRIDE_HZ: float = 2.5
 const LEG_SWING_DEGREES: float = 22.0
 const ARM_SWING_DEGREES: float = 14.0
 const BODY_BOB_METERS: float = 0.035
+
+@export_range(0.1, 5.0, 0.05) var stride_hz: float = 2.5
 
 @onready var bubble: BasicBubble = get_parent() as BasicBubble
 @onready var creature_rig: Node3D = get_node("../Visual/CreatureRig") as Node3D
@@ -47,8 +48,8 @@ func reset_walk_phase() -> void:
 
 
 func _apply_walk_pose() -> void:
-	var stride: float = sin(_elapsed_seconds * TAU * STRIDE_HZ)
-	var bounce: float = abs(sin(_elapsed_seconds * TAU * STRIDE_HZ))
+	var stride: float = sin(_elapsed_seconds * TAU * stride_hz)
+	var bounce: float = abs(sin(_elapsed_seconds * TAU * stride_hz))
 	left_leg.rotation_degrees.z = stride * LEG_SWING_DEGREES
 	right_leg.rotation_degrees.z = -stride * LEG_SWING_DEGREES
 	left_arm.rotation_degrees.z = -18.0 - stride * ARM_SWING_DEGREES

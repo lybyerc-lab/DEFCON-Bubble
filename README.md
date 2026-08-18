@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. The current gameplay edge adds faceless bipedal bubble monsters built from connected soap bubbles, an acid-lime Fast variant, a castle-roof toothpick launcher, and one authored three-wave mixed encounter. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. The current gameplay edge adds the approved seven-monster visual roster, a five-hit slow Big Blub siege tank, a castle-roof toothpick launcher, and one authored three-wave Basic/Fast/Heavy encounter. Beach presentation is a reusable environment scene composed separately from gameplay. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
@@ -56,6 +56,8 @@ godot --headless --path . --script res://tests/castle_impact_smoke.gd
 godot --headless --path . --script res://tests/first_defense_smoke.gd
 godot --headless --path . --script res://tests/fast_bubble_smoke.gd
 godot --headless --path . --script res://tests/bubble_creature_smoke.gd
+godot --headless --path . --script res://tests/heavy_bubble_smoke.gd
+godot --headless --path . --script res://tests/environment_structure_smoke.gd
 godot --headless --path . --script res://tests/mixed_encounter_smoke.gd
 ```
 

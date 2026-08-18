@@ -209,7 +209,7 @@ func _authored_schedule_is_exact(encounter: MixedEncounter) -> bool:
 	var expected_kinds: Array = [
 		[&"basic", &"basic", &"basic"],
 		[&"fast", &"basic", &"fast", &"basic"],
-		[&"fast", &"fast", &"basic", &"fast", &"fast"],
+		[&"heavy", &"fast", &"basic", &"fast", &"fast"],
 	]
 	var expected_times: Array = [
 		[0.0, 1.6, 3.2],
@@ -240,7 +240,7 @@ func _assert_all_spawn_contracts(encounter: MixedEncounter) -> void:
 	var expected_kinds: Array[StringName] = [
 		&"basic", &"basic", &"basic",
 		&"fast", &"basic", &"fast", &"basic",
-		&"fast", &"fast", &"basic", &"fast", &"fast",
+		&"heavy", &"fast", &"basic", &"fast", &"fast",
 	]
 	var expected_ids: Array[StringName] = [
 		&"enemy:basic:mixed_encounter:w01:s01",
@@ -250,7 +250,7 @@ func _assert_all_spawn_contracts(encounter: MixedEncounter) -> void:
 		&"enemy:basic:mixed_encounter:w02:s02",
 		&"enemy:fast:mixed_encounter:w02:s03",
 		&"enemy:basic:mixed_encounter:w02:s04",
-		&"enemy:fast:mixed_encounter:w03:s01",
+		&"enemy:heavy:mixed_encounter:w03:s01",
 		&"enemy:fast:mixed_encounter:w03:s02",
 		&"enemy:basic:mixed_encounter:w03:s03",
 		&"enemy:fast:mixed_encounter:w03:s04",
@@ -263,10 +263,15 @@ func _assert_all_spawn_contracts(encounter: MixedEncounter) -> void:
 		if bubble == null:
 			continue
 		_check(bubble.bubble_id == expected_ids[index], "every generated ID must encode exact wave and slot")
-		var expects_fast: bool = expected_kinds[index] == &"fast"
+		var expected_kind: StringName = expected_kinds[index]
+		var expects_fast: bool = expected_kind == &"fast"
+		var expects_heavy: bool = expected_kind == &"heavy"
 		_check(bubble.has_node("FastBubbleFx") == expects_fast, "every slot must instantiate its authored Basic/Fast scene type")
-		var expected_speed: float = 2.25 if expects_fast else 1.25
+		_check(bubble.has_node("HeavyBubbleFx") == expects_heavy, "only the authored heavy slot may instantiate Big Blub presentation")
+		var expected_speed: float = 0.55 if expects_heavy else (2.25 if expects_fast else 1.25)
 		_check(is_equal_approx(bubble.advance_speed_mps, expected_speed), "every slot must retain its authored type speed")
+		var expected_health: float = 5.0 if expects_heavy else 1.0
+		_check(is_equal_approx(bubble.max_health, expected_health), "every slot must retain its authored type health")
 
 
 func _assert_live_survivors_stopped(encounter: MixedEncounter) -> void:
@@ -327,15 +332,17 @@ func _spawn_next(encounter: MixedEncounter) -> void:
 
 func _pierce(bubble: BasicBubble) -> void:
 	var receiver: DamageReceiver = bubble.get_node("DamageReceiver") as DamageReceiver
-	var request := DamageRequest.new(
-		&"test:toothpick",
-		bubble.bubble_id,
-		1.0,
-		DamageRequest.DamageType.PIERCE,
-		bubble.global_position,
-	)
-	_check(receiver.request_damage(request), "PIERCE must cross the inherited bubble damage boundary")
-	_check(bubble.is_popped(), "one PIERCE must resolve each authored bubble")
+	var required_hits: int = ceili(bubble.max_health)
+	for hit_index: int in range(required_hits):
+		var request := DamageRequest.new(
+			StringName("test:toothpick:%d" % hit_index),
+			bubble.bubble_id,
+			1.0,
+			DamageRequest.DamageType.PIERCE,
+			bubble.global_position,
+		)
+		_check(receiver.request_damage(request), "PIERCE must cross the inherited bubble damage boundary")
+	_check(bubble.is_popped(), "authored PIERCE count must resolve each bubble type")
 
 
 func _finish() -> void:

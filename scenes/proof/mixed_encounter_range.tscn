@@ -56,7 +56,7 @@ spawns = Array[ExtResource("4_spawn_plan")]([SubResource("Spawn_w2_01"), SubReso
 
 [sub_resource type="Resource" id="Spawn_w3_01"]
 script = ExtResource("4_spawn_plan")
-kind = &"fast"
+kind = &"heavy"
 spawn_at_seconds = 0.0
 
 [sub_resource type="Resource" id="Spawn_w3_02"]

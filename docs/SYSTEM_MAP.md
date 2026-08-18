@@ -27,10 +27,12 @@
 - `EncounterSpawnPlan` and `EncounterWavePlan` hold only the authored kind/time sequence and wave identity/title for the current mixed encounter. They are not a registry, procedural grammar, or rule engine.
 - `MixedEncounter` owns the fixed three-wave order, per-wave clock, 2.25-second intermissions, stable wave/slot IDs, and READY/WAVE_ACTIVE/INTERMISSION/WON/LOST outcome. It does not own enemy damage/death or castle health.
 - Fast Bubble instantiates inherited `BasicBubble` gameplay at 2.25 m/s with the same one-health, one-IMPACT, POP, collision, and despawn contracts. Its acid-lime pulse component is presentation only.
+- Heavy Bubble/Big Blub instantiates inherited `BasicBubble` gameplay at five health and `0.55 m/s`; its 1.7 scale, wide body, film color, and slow gait are presentation/configuration, not parallel death logic.
 - `BubbleCreatureFx` poses the shared faceless bubble-appendage rig and hides it when BasicBubble emits `popped`. It does not translate the enemy or own collision, damage, death, or despawn.
 - The mixed-range `ProjectileOrigin` is a child of `CastleChunk`, so its roof-relative launch point follows authored castle placement. Range glue still only translates FIRE intent into ToothpickProjectile creation.
 - The same `CastleChunk` instance persists through all three mixed waves; no encounter transition heals or recreates it.
 - The mixed-encounter HUD observes encounter and castle signals. FIRE/RESET/RETRY controls request intent and never set encounter or castle truth.
+- `BeachEnvironment` owns only reusable sand, water, shoreline, and sunlight presentation. `BeachArena` composes it beside `MixedEncounterRange` and the camera.
 - HUD renders and requests choices; it never becomes gameplay truth.
 - Platform lifecycle adapters will own focus/background/resume and system-interruption translation without owning run rules.
 - Quality/presentation policy may reduce rendering cost but must not change authoritative gameplay outcomes.

@@ -19,8 +19,10 @@ enum EncounterState {
 
 const KIND_BASIC: StringName = &"basic"
 const KIND_FAST: StringName = &"fast"
+const KIND_HEAVY: StringName = &"heavy"
 const BASIC_BUBBLE_SCENE: PackedScene = preload("res://scenes/enemies/basic_bubble.tscn")
 const FAST_BUBBLE_SCENE: PackedScene = preload("res://scenes/enemies/fast_bubble.tscn")
+const HEAVY_BUBBLE_SCENE: PackedScene = preload("res://scenes/enemies/heavy_bubble.tscn")
 const INTERMISSION_SECONDS: float = 2.25
 
 @export_category("Mixed Encounter Plans")
@@ -217,6 +219,8 @@ func _scene_for_kind(kind: StringName) -> PackedScene:
 			return BASIC_BUBBLE_SCENE
 		KIND_FAST:
 			return FAST_BUBBLE_SCENE
+		KIND_HEAVY:
+			return HEAVY_BUBBLE_SCENE
 		_:
 			assert(false, "[DB:ENCOUNTER:MIXED_THREE_WAVE] Unknown authored bubble kind: %s" % kind)
 			return null
@@ -236,7 +240,10 @@ func _validate_authored_waves() -> void:
 		var previous_time: float = -1.0
 		for spawn: EncounterSpawnPlan in wave.spawns:
 			assert(spawn != null, "[DB:ENCOUNTER:MIXED_THREE_WAVE] Spawn plans cannot be null.")
-			assert(spawn.kind == KIND_BASIC or spawn.kind == KIND_FAST, "[DB:ENCOUNTER:MIXED_THREE_WAVE] Unknown spawn kind.")
+			assert(
+				spawn.kind == KIND_BASIC or spawn.kind == KIND_FAST or spawn.kind == KIND_HEAVY,
+				"[DB:ENCOUNTER:MIXED_THREE_WAVE] Unknown spawn kind.",
+			)
 			assert(spawn.spawn_at_seconds >= 0.0, "[DB:ENCOUNTER:MIXED_THREE_WAVE] Spawn time cannot be negative.")
 			assert(spawn.spawn_at_seconds >= previous_time, "[DB:ENCOUNTER:MIXED_THREE_WAVE] Spawn plans must be time ordered.")
 			previous_time = spawn.spawn_at_seconds

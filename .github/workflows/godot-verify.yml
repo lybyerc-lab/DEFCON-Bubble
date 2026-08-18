@@ -58,6 +58,12 @@ jobs:
       - name: Run bipedal Bubble Creature proof
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/bubble_creature_smoke.gd
 
+      - name: Run Big Blub proof
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/heavy_bubble_smoke.gd
+
+      - name: Run beach environment structure proof
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/environment_structure_smoke.gd
+
       - name: Run mixed three-wave encounter proof
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/mixed_encounter_smoke.gd
 
