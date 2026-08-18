@@ -1,0 +1,166 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/proof/first_defense_range.gd" id="1_range"]
+[ext_resource type="PackedScene" path="res://scenes/castle/castle_chunk.tscn" id="2_castle"]
+[ext_resource type="Script" path="res://scripts/waves/first_defense_wave.gd" id="3_wave"]
+[ext_resource type="Script" path="res://scripts/presentation/first_defense_hud.gd" id="4_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_normal"]
+bg_color = Color(0.87, 0.31, 0.09, 0.96)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.83, 0.36, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.16, 0.08, 0.03, 0.42)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_hover"]
+bg_color = Color(0.98, 0.4, 0.1, 0.98)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.91, 0.52, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.16, 0.08, 0.03, 0.46)
+shadow_size = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fire_pressed"]
+bg_color = Color(0.67, 0.2, 0.06, 1)
+border_width_left = 5
+border_width_top = 7
+border_width_right = 5
+border_width_bottom = 3
+border_color = Color(1, 0.74, 0.24, 1)
+corner_radius_top_left = 38
+corner_radius_top_right = 38
+corner_radius_bottom_right = 38
+corner_radius_bottom_left = 38
+shadow_color = Color(0.12, 0.05, 0.02, 0.32)
+shadow_size = 3
+
+[node name="FirstDefenseRange" type="Node3D"]
+script = ExtResource("1_range")
+
+[node name="ProjectileOrigin" type="Marker3D" parent="."]
+position = Vector3(-5, 1, 0)
+
+[node name="CastleChunk" parent="." instance=ExtResource("2_castle")]
+position = Vector3(-3.2, 0.7, 0)
+
+[node name="FirstDefenseWave" type="Node3D" parent="."]
+script = ExtResource("3_wave")
+spawn_interval_seconds = 1.6
+castle_chunk_path = NodePath("../CastleChunk")
+spawn_marker_path = NodePath("SpawnMarker")
+bubble_container_path = NodePath("BubbleContainer")
+
+[node name="SpawnMarker" type="Marker3D" parent="FirstDefenseWave"]
+position = Vector3(6, 1, 0)
+
+[node name="BubbleContainer" type="Node3D" parent="FirstDefenseWave"]
+
+[node name="TouchHUD" type="CanvasLayer" parent="."]
+
+[node name="WaveHUD" type="Control" parent="TouchHUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_hud")
+wave_path = NodePath("../../FirstDefenseWave")
+castle_chunk_path = NodePath("../../CastleChunk")
+
+[node name="StatusLabel" type="Label" parent="TouchHUD/WaveHUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 18.0
+offset_bottom = 62.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.93, 0.65, 1)
+theme_override_colors/font_shadow_color = Color(0.12, 0.07, 0.02, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 34
+text = "READY"
+horizontal_alignment = 1
+
+[node name="RemainingLabel" type="Label" parent="TouchHUD/WaveHUD"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.02
+anchor_top = 0.03
+anchor_right = 0.28
+anchor_bottom = 0.11
+theme_override_colors/font_color = Color(1, 1, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.04, 0.01, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 27
+text = "BUBBLES: 3 / 3"
+
+[node name="CastleLabel" type="Label" parent="TouchHUD/WaveHUD"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.72
+anchor_top = 0.03
+anchor_right = 0.98
+anchor_bottom = 0.11
+theme_override_colors/font_color = Color(1, 0.87, 0.52, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.04, 0.01, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 27
+text = "CASTLE: 2 / 2"
+horizontal_alignment = 2
+
+[node name="TouchControls" type="Control" parent="TouchHUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ResetButton" type="Button" parent="TouchHUD/TouchControls"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.02
+anchor_top = 0.82
+anchor_right = 0.19
+anchor_bottom = 0.96
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "RESET"
+
+[node name="FireButton" type="Button" parent="TouchHUD/TouchControls"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.77
+anchor_top = 0.77
+anchor_right = 0.98
+anchor_bottom = 0.96
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.98, 0.86, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.94, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.94, 0.74, 1)
+theme_override_font_sizes/font_size = 42
+theme_override_styles/normal = SubResource("StyleBox_fire_normal")
+theme_override_styles/hover = SubResource("StyleBox_fire_hover")
+theme_override_styles/pressed = SubResource("StyleBox_fire_pressed")
+text = "FIRE!"

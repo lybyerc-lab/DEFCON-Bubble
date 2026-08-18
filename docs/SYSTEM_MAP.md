@@ -21,7 +21,9 @@
 - Enemy owns its behavior and requests damage.
 - Castle owns castle chunks, localized destruction, and survival evaluation.
 - `CastleChunk` currently proves local `IMPACT` filtering, health, collision shutdown, and destruction truth for one modular chunk; its presentation observer only renders damage.
-- WaveDirector will own wave state/timing.
+- `FirstDefenseWave` currently owns the fixed three-bubble proof's READY/RUNNING/WON/LOST state, spawn timing/count, and terminal evaluation. It is not a generalized wave framework.
+- Each spawned `BasicBubble` still owns movement, its one castle-impact request, pop state, and despawn. `FirstDefenseWave` may stop surviving advance after terminal castle loss but does not declare those enemies dead.
+- The first-defense HUD observes wave and castle signals; it owns no spawn, health, damage, or terminal outcome.
 - HUD renders and requests choices; it never becomes gameplay truth.
 - Platform lifecycle adapters will own focus/background/resume and system-interruption translation without owning run rules.
 - Quality/presentation policy may reduce rendering cost but must not change authoritative gameplay outcomes.

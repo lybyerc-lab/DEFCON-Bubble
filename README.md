@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, and the first Bubble #1 toothpick POP proof are accepted on `main`. The current gameplay edge is the first castle-impact proof: one advancing bubble, one modular sandcastle chunk, and one typed `IMPACT` outcome. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, and the first castle-impact proof are accepted on `main`. The current gameplay edge is `[DB:WAVE:FIRST_DEFENSE]`: exactly three ordinary bubbles attack one modular castle chunk on a fixed stagger, with an authoritative win/loss state and phone-readable encounter status. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
@@ -51,9 +51,16 @@ Headless verification:
 ```bash
 godot --headless --path . --script res://tests/foundation_smoke.gd
 godot --headless --path . --script res://tests/damage_contract_smoke.gd
+godot --headless --path . --script res://tests/pop_proof_smoke.gd
+godot --headless --path . --script res://tests/castle_impact_smoke.gd
+godot --headless --path . --script res://tests/first_defense_smoke.gd
 ```
 
-Phone-facing preview and native export workflows should be source-driven and traceable to an exact Git revision. See `docs/MOBILE_FIRST.md`.
+## Phone review booth
+
+The replaceable Web review booth is available at <https://lybyerc-lab.github.io/DEFCON-Bubble/>. Always use `docs/ACTIVE_HANDOFF.md` and live GitHub state to confirm which exact revision is deployed before judging a candidate.
+
+Phone-facing preview and native export workflows must remain source-driven and traceable to an exact Git revision. See `docs/MOBILE_FIRST.md`.
 
 ## Project truth
 

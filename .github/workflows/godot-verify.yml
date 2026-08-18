@@ -49,5 +49,8 @@ jobs:
       - name: Run first castle impact proof
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/castle_impact_smoke.gd
 
+      - name: Run first defensive wave proof
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/first_defense_smoke.gd
+
       - name: Boot main scene headlessly
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --quit-after 3
