@@ -49,10 +49,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build pinned Godot Web export
+        id: build_web
         shell: bash
         run: bash scripts/build_web.sh
 
       - name: Verify exact preview candidate
+        id: verify_candidate
         shell: bash
         run: |
           set -euo pipefail
@@ -64,9 +66,11 @@ jobs:
           test -f build/web/index.html
 
       - name: Configure GitHub Pages
+        id: configure_pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
 
       - name: Upload GitHub Pages artifact
+        id: upload_pages
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
           path: build/web
@@ -76,20 +80,36 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
+          BUILD_OUTCOME: ${{ steps.build_web.outcome }}
+          VERIFY_OUTCOME: ${{ steps.verify_candidate.outcome }}
+          CONFIGURE_OUTCOME: ${{ steps.configure_pages.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload_pages.outcome }}
         run: |
           set -euo pipefail
-          payload="$(jq -n \
-            --arg state "failure" \
-            --arg description "Pages preview build or verification failed" \
-            --arg context "pages-preview" \
-            '{state:$state,description:$description,context:$context}')"
-          curl -fsSL \
-            -X POST \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-            -d "${payload}"
+          stage="unknown"
+          if [ "${BUILD_OUTCOME}" != "success" ]; then
+            stage="build-web"
+          elif [ "${VERIFY_OUTCOME}" != "success" ]; then
+            stage="verify-candidate"
+          elif [ "${CONFIGURE_OUTCOME}" != "success" ]; then
+            stage="configure-pages"
+          elif [ "${UPLOAD_OUTCOME}" != "success" ]; then
+            stage="upload-pages"
+          fi
+          for context in "pages-preview" "pages-preview-failure/${stage}"; do
+            payload="$(jq -n \
+              --arg state "failure" \
+              --arg description "Pages preview failed during ${stage}" \
+              --arg context "${context}" \
+              '{state:$state,description:$description,context:$context}')"
+            curl -fsSL \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+              -d "${payload}"
+          done
 
   deploy:
     name: Deploy exact-source phone preview
@@ -137,15 +157,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          payload="$(jq -n \
-            --arg state "failure" \
-            --arg description "Pages preview deployment failed" \
-            --arg context "pages-preview" \
-            '{state:$state,description:$description,context:$context}')"
-          curl -fsSL \
-            -X POST \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-            -d "${payload}"
+          for context in "pages-preview" "pages-preview-failure/deploy-pages"; do
+            payload="$(jq -n \
+              --arg state "failure" \
+              --arg description "Pages preview deployment failed" \
+              --arg context "${context}" \
+              '{state:$state,description:$description,context:$context}')"
+            curl -fsSL \
+              -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+              -d "${payload}"
+          done
