@@ -28,6 +28,10 @@ func _init() -> void:
 		ProjectSettings.get_setting("rendering/renderer/rendering_method.web", "") == "gl_compatibility",
 		"Web preview must use the Compatibility renderer override",
 	)
+	_check(
+		ProjectSettings.get_setting("rendering/textures/vram_compression/import_etc2_astc", false) == true,
+		"mobile/Web texture import must enable ETC2/ASTC for the Web export preset",
+	)
 
 	var main_scene: PackedScene = load("res://scenes/boot/game_root.tscn") as PackedScene
 	_check(main_scene != null, "GameRoot scene must load")
