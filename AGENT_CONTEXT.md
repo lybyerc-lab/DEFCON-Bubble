@@ -1,6 +1,6 @@
 # DEFCON BUBBLE agent context
 
-Read this before changing the repository.
+Read this after resolving live GitHub repository state.
 
 ## Pitch
 
@@ -26,16 +26,19 @@ A 2.5D beach-defense game. The player holds the left side and protects a sandcas
 - Data-first definitions with stable IDs.
 - Composition over deep inheritance.
 - Presentation observes gameplay; it does not own gameplay truth.
+- Shared typed damage boundary is canonical on `main`.
 
-## Current milestone
+## Current development edge
 
-Foundation 0. Establish a clean, recoverable, testable repository before production gameplay begins.
+Foundation 0 and `[DB:COMBAT:DAMAGE]` are accepted. The next bounded gameplay proof is `[DB:COMBAT:POP]`: one basic bubble, one toothpick hit path, and target-owned pop/despawn behavior through the shared damage contract.
+
+Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
 ## Semantic anchors
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:DIRECTOR]`, `[DB:DEBUG:SEED]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:DIRECTOR]`, `[DB:DEBUG:SEED]`.
 
 ## Do not
 
@@ -49,4 +52,4 @@ Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:CASTLE:CHUNK]`, `[DB
 
 ## Source of truth
 
-Implementation truth is GitHub. Deeper creative/design truth is maintained in the DEFCON BUBBLE Google Drive project core.
+Implementation truth is GitHub. Deeper creative/design truth is maintained in the DEFCON BUBBLE Google Drive project core. Director's Notes guide current judgment but do not override live implementation truth or locked decisions.

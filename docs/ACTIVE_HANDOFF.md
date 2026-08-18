@@ -1,7 +1,7 @@
 # Active handoff
 
 ## Recovery rule
-Resolve GitHub state first. Do not hardcode this file's own live HEAD.
+Resolve live GitHub state first. Then read `AGENT_CONTEXT.md`, this handoff, and `docs/DIRECTORS_NOTES.md` before acting.
 
 - If PR #2 (`combat: establish typed damage contract`) is still open, verify its exact live head and finish that promotion before starting gameplay integration.
 - If PR #2 is merged, the damage contract is canonical and the next bounded milestone is the first POP proof.
@@ -11,7 +11,7 @@ Foundation 0 is accepted on `main`.
 
 The shared damage boundary is:
 - `DamageRequest`: source ID, target ID, positive amount, typed damage category, impact position.
-- `DamageReceiver`: validates/routs and emits the request; owns no health, resistance, death, destruction, reward, or presentation outcome.
+- `DamageReceiver`: validates/routes and emits the request; owns no health, resistance, death, destruction, reward, or presentation outcome.
 - Initial damage categories: `PIERCE` and `IMPACT`.
 
 ## Next bounded milestone
