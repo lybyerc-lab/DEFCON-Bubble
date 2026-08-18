@@ -44,13 +44,15 @@ The Game Director accepted the final POP sound, castle success/failure paths, an
 
 `[DB:ENCOUNTER:MIXED_THREE_WAVE]` is the current gameplay milestone.
 
-Introduce Fast Bubble as inherited BasicBubble gameplay at 2.25 m/s with a smaller forgiving 0.85 root/collision scale and an unmistakable presentation-only acid-lime 4 Hz pulse. Then prove one authored three-wave encounter against the same persistent two-health CastleChunk.
+Present Basic and Fast enemies as bipedal bubble monsters with a face, horns, arms, feet, and presentation-only walk cycle. Introduce Fast Bubble as inherited BasicBubble gameplay at 2.25 m/s with a smaller forgiving 0.85 root/collision scale and an unmistakable acid-lime 4 Hz pulse. Then prove one authored three-wave encounter against the same persistent two-health CastleChunk.
 
 The authored schedule is BASIC TRAINING (`basic` at 0.0, 1.6, 3.2), FAST BUBBLES (`fast` 0.0, `basic` 1.2, `fast` 4.2, `basic` 5.4), and FINAL PUSH (`fast` 0.0, 0.9, `basic` 2.0, `fast` 5.1, 6.0). Intermissions are exactly 2.25 seconds with no clock carry.
 
 ### Acceptance target
 
 - Fast Bubble retains one health, one IMPACT, accepted POP/despawn, and BasicBubble gameplay ownership
+- Basic and Fast both inherit the same readable bipedal monster rig; its animation never changes movement, collision, damage, or outcome
+- creature limbs disappear on authoritative POP so the accepted membrane rupture remains the death read
 - authoritative encounter state moves only through READY, WAVE_ACTIVE, INTERMISSION, WON, and LOST
 - small typed `EncounterSpawnPlan` and `EncounterWavePlan` Resources hold only the exact kind/time and wave identity/title
 - every authored spawn receives a unique wave+slot ID; duplicate, foreign, stale, and terminal callbacks cannot mutate truth
@@ -69,7 +71,7 @@ The current candidate is local and uncommitted until the implementation, pinned 
 - branch: `agent/fast-bubble-encounter`
 - base: accepted `main` at `306f7a8c94fe55e17b7dd29850f9f327211ccb9c`
 - pull request: none yet
-- pinned Godot 4.7.1 local verification: passed (import, all seven fixtures, and headless boot)
+- pinned Godot 4.7.1 local verification: passed (import, all eight fixtures, and headless boot)
 - exact-source Pages preview: pending
 
 FirstDefenseWave, its range, HUD, and deterministic test remain unchanged as frozen accepted regression proof.

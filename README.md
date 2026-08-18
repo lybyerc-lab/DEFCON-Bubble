@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. The current gameplay edge adds an acid-lime Fast Bubble and one authored three-wave mixed encounter with persistent castle survival, wave progression, victory, defeat, and retry. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. The current gameplay edge adds bipedal bubble monsters, an acid-lime Fast variant, and one authored three-wave mixed encounter with persistent castle survival, wave progression, victory, defeat, and retry. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
@@ -55,6 +55,7 @@ godot --headless --path . --script res://tests/pop_proof_smoke.gd
 godot --headless --path . --script res://tests/castle_impact_smoke.gd
 godot --headless --path . --script res://tests/first_defense_smoke.gd
 godot --headless --path . --script res://tests/fast_bubble_smoke.gd
+godot --headless --path . --script res://tests/bubble_creature_smoke.gd
 godot --headless --path . --script res://tests/mixed_encounter_smoke.gd
 ```
 

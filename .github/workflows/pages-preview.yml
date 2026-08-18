@@ -67,6 +67,7 @@ jobs:
           "${godot_bin}" --headless --path . --script res://tests/castle_impact_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/first_defense_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/fast_bubble_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/bubble_creature_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/mixed_encounter_smoke.gd
           "${godot_bin}" --headless --path . --quit-after 3
           test -f build/web/index.html

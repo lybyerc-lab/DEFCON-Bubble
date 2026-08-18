@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/basic_bubble.gd" id="1_bubble"]
 [ext_resource type="Script" path="res://scripts/combat/damage_receiver.gd" id="2_receiver"]
 [ext_resource type="Script" path="res://scripts/presentation/bubble_pop_fx.gd" id="3_pop_fx"]
 [ext_resource type="AudioStream" path="res://assets/audio/bubble_pop_cc0.wav" id="4_pop_audio"]
+[ext_resource type="Script" path="res://scripts/presentation/bubble_creature_fx.gd" id="5_creature_fx"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_bubble"]
 radius = 0.65
@@ -16,6 +17,50 @@ radius = 0.65
 radius = 0.72
 height = 1.44
 
+[sub_resource type="StandardMaterial3D" id="Material_limb"]
+albedo_color = Color(0.24, 0.08, 0.31, 1)
+roughness = 0.34
+
+[sub_resource type="StandardMaterial3D" id="Material_eye"]
+albedo_color = Color(1, 0.98, 0.82, 1)
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="Material_dark"]
+albedo_color = Color(0.035, 0.018, 0.045, 1)
+roughness = 0.28
+
+[sub_resource type="StandardMaterial3D" id="Material_horn"]
+albedo_color = Color(1, 0.42, 0.08, 1)
+roughness = 0.3
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_limb"]
+radius = 0.065
+height = 0.38
+
+[sub_resource type="SphereMesh" id="SphereMesh_foot"]
+radius = 0.12
+height = 0.16
+
+[sub_resource type="SphereMesh" id="SphereMesh_eye"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="SphereMesh" id="SphereMesh_pupil"]
+radius = 0.052
+height = 0.104
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_mouth"]
+radius = 0.032
+height = 0.18
+
+[sub_resource type="CylinderMesh" id="ConeMesh_horn"]
+top_radius = 0.0
+bottom_radius = 0.09
+height = 0.24
+
+[sub_resource type="BoxMesh" id="BoxMesh_brow"]
+size = Vector3(0.22, 0.045, 0.045)
+
 [node name="BasicBubble" type="Area3D"]
 collision_layer = 8
 collision_mask = 36
@@ -27,6 +72,116 @@ script = ExtResource("1_bubble")
 
 [node name="BubbleMesh" type="MeshInstance3D" parent="Visual"]
 mesh = SubResource("SphereMesh_bubble")
+
+[node name="CreatureRig" type="Node3D" parent="Visual"]
+
+[node name="LeftLegPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.22, -0.54, 0)
+
+[node name="Leg" type="MeshInstance3D" parent="Visual/CreatureRig/LeftLegPivot"]
+position = Vector3(0, -0.18, 0)
+mesh = SubResource("CapsuleMesh_limb")
+material_override = SubResource("Material_limb")
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/CreatureRig/LeftLegPivot"]
+position = Vector3(-0.055, -0.4, 0.08)
+scale = Vector3(1.35, 0.72, 1.35)
+mesh = SubResource("SphereMesh_foot")
+material_override = SubResource("Material_limb")
+
+[node name="RightLegPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0.22, -0.54, 0)
+
+[node name="Leg" type="MeshInstance3D" parent="Visual/CreatureRig/RightLegPivot"]
+position = Vector3(0, -0.18, 0)
+mesh = SubResource("CapsuleMesh_limb")
+material_override = SubResource("Material_limb")
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/CreatureRig/RightLegPivot"]
+position = Vector3(-0.055, -0.4, 0.08)
+scale = Vector3(1.35, 0.72, 1.35)
+mesh = SubResource("SphereMesh_foot")
+material_override = SubResource("Material_limb")
+
+[node name="LeftArmPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.59, -0.05, 0)
+rotation_degrees = Vector3(0, 0, -18)
+
+[node name="Arm" type="MeshInstance3D" parent="Visual/CreatureRig/LeftArmPivot"]
+position = Vector3(0, -0.15, 0)
+scale = Vector3(0.82, 0.82, 0.82)
+mesh = SubResource("CapsuleMesh_limb")
+material_override = SubResource("Material_limb")
+
+[node name="RightArmPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0.59, -0.05, 0)
+rotation_degrees = Vector3(0, 0, 18)
+
+[node name="Arm" type="MeshInstance3D" parent="Visual/CreatureRig/RightArmPivot"]
+position = Vector3(0, -0.15, 0)
+scale = Vector3(0.82, 0.82, 0.82)
+mesh = SubResource("CapsuleMesh_limb")
+material_override = SubResource("Material_limb")
+
+[node name="Face" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0, 0.04, 0.55)
+
+[node name="LeftEye" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(-0.2, 0.16, 0.035)
+scale = Vector3(0.9, 1.2, 0.48)
+mesh = SubResource("SphereMesh_eye")
+material_override = SubResource("Material_eye")
+
+[node name="RightEye" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(0.2, 0.16, 0.035)
+scale = Vector3(0.9, 1.2, 0.48)
+mesh = SubResource("SphereMesh_eye")
+material_override = SubResource("Material_eye")
+
+[node name="LeftPupil" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(-0.215, 0.145, 0.105)
+scale = Vector3(0.9, 1.15, 0.55)
+mesh = SubResource("SphereMesh_pupil")
+material_override = SubResource("Material_dark")
+
+[node name="RightPupil" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(0.185, 0.145, 0.105)
+scale = Vector3(0.9, 1.15, 0.55)
+mesh = SubResource("SphereMesh_pupil")
+material_override = SubResource("Material_dark")
+
+[node name="LeftBrow" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(-0.2, 0.31, 0.09)
+rotation_degrees = Vector3(0, 0, -14)
+mesh = SubResource("BoxMesh_brow")
+material_override = SubResource("Material_dark")
+
+[node name="RightBrow" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(0.2, 0.31, 0.09)
+rotation_degrees = Vector3(0, 0, 14)
+mesh = SubResource("BoxMesh_brow")
+material_override = SubResource("Material_dark")
+
+[node name="Mouth" type="MeshInstance3D" parent="Visual/CreatureRig/Face"]
+position = Vector3(0, -0.14, 0.105)
+rotation_degrees = Vector3(0, 0, 90)
+mesh = SubResource("CapsuleMesh_mouth")
+material_override = SubResource("Material_dark")
+
+[node name="LeftHorn" type="MeshInstance3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.29, 0.62, 0.02)
+rotation_degrees = Vector3(0, 0, -18)
+mesh = SubResource("ConeMesh_horn")
+material_override = SubResource("Material_horn")
+
+[node name="RightHorn" type="MeshInstance3D" parent="Visual/CreatureRig"]
+position = Vector3(0.29, 0.62, 0.02)
+rotation_degrees = Vector3(0, 0, 18)
+mesh = SubResource("ConeMesh_horn")
+material_override = SubResource("Material_horn")
+
+[node name="BubbleCreatureFx" type="Node3D" parent="."]
+script = ExtResource("5_creature_fx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape_bubble")
