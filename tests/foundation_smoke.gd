@@ -20,6 +20,14 @@ func _init() -> void:
 		ProjectSettings.get_setting("layer_names/3d_physics/layer_6", "") == "castle",
 		"3D collision layer 6 must be castle",
 	)
+	_check(
+		ProjectSettings.get_setting("rendering/renderer/rendering_method.mobile", "") == "mobile",
+		"native mobile must use the Mobile renderer override",
+	)
+	_check(
+		ProjectSettings.get_setting("rendering/renderer/rendering_method.web", "") == "gl_compatibility",
+		"Web preview must use the Compatibility renderer override",
+	)
 
 	var main_scene: PackedScene = load("res://scenes/boot/game_root.tscn") as PackedScene
 	_check(main_scene != null, "GameRoot scene must load")
