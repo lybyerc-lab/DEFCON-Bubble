@@ -1,0 +1,20 @@
+# Godot generated/imported data.
+.godot/
+
+# Godot Mono/C# output if ever introduced.
+.mono/
+
+# Local editor/OS noise.
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Local builds and evidence.
+builds/
+evidence/
+
+# Secrets and local environment files.
+.env
+.env.*
+!.env.example

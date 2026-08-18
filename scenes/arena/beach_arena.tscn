@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(24, 10)
+
+[node name="BeachArena" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 6, 12)
+rotation_degrees = Vector3(-22, 0, 0)
+current = true
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-45, -30, 0)
+shadow_enabled = true
