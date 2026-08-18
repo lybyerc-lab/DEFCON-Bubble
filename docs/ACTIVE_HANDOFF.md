@@ -22,40 +22,44 @@ The product direction is mobile-first:
 - native mobile renderer override is `mobile`
 - Web renderer override is `gl_compatibility`
 
+## Accepted gameplay edge
+
+`[DB:COMBAT:POP]` is accepted and promoted to `main` at `98ce22ed5f119bbb9d4adfc3f72e8468b1aafe58`.
+
+The accepted proof establishes:
+- one basic bubble receiving a typed `PIERCE` request from one toothpick
+- target-owned health, pop state, collision shutdown, and timed despawn
+- presentation-owned soap-film rupture, centered droplet spray, mist, and CC0 POP audio
+- Web FIRE/RESET controls for rapid phone review
+- deterministic foundation, damage-contract, POP, import, and headless-boot verification
+- exact-source GitHub Pages build and deployment
+
+Godot Verify #26 passed on the accepted PR head. The post-merge `main` verification and production Pages deployment also passed. The Game Director accepted the final POP sound on a phone.
+
 ## Current bounded milestone
 
-`[DB:COMBAT:POP]` remains the gameplay milestone.
-
-Prove one basic bubble can receive a `PIERCE` request from a toothpick hit, own its resulting pop/despawn behavior through the shared damage boundary, and feel clean/readable through a phone-accessible touch preview.
-
-The mobile preview is an acceptance surface for POP, not permission to expand the gameplay scope.
+No next gameplay milestone is selected yet. Do not infer one from the system map, long-term fantasy, or previously excluded POP scope.
 
 ## Immediate sequence
 
 After resolving live GitHub state:
 
-1. Identify the current POP candidate and exact head SHA. PR #4 (`combat: prove first bubble pop`) is the known candidate at the time of this handoff, but live GitHub wins.
-2. Reconcile the POP candidate with the canonical mobile-first law if `main` has advanced.
-3. Keep the proof narrow: one basic bubble, one toothpick path, touch-accessible FIRE/RESET where needed, deterministic automated coverage, and minimal satisfying POP presentation.
-4. Prefer a source-driven Web preview that maps to the exact candidate revision so the Game Director/player can open it on a phone without a desktop development setup.
-5. Run automated proof, then perform the phone feel/readability check.
-6. Tune only inside the POP milestone if the phone test exposes readability, touch, timing, audio, or presentation problems.
-7. Promote only after both technical proof and player-facing mobile acceptance are satisfactory.
+1. Get explicit Game Director direction for one next player-facing question.
+2. Record that question here as a bounded milestone with acceptance evidence and non-goals.
+3. Branch from current `main`; do not continue feature work on the merged POP branch.
+4. Preserve the accepted damage, POP ownership, mobile-first, renderer, and preview contracts.
+5. Prefer existing licensed assets for commodity needs when they meet the creative target; record provenance and license.
+6. Build the smallest playable proof that answers the selected question.
+7. Run deterministic automation, then collect the representative player/device evidence required by the risk.
+8. Promote only after technical proof and Game Director acceptance.
 
-Native store packaging is not required to accept the first POP milestone.
+## Until the next milestone is selected
 
-## Must not drift into
-
-- waves or procedural spawning
-- castle damage
-- upgrade systems
-- repair systems
-- save/meta progression
-- large weapon trees
-- pooling before profiling
-- generalized enemy frameworks beyond what Bubble #1 actually needs
-- full native-store packaging before POP needs it
-- speculative mobile optimization without measurements
+- do not silently choose waves, castle damage, upgrades, repair, progression, or another major system
+- do not reopen accepted POP tuning without new player evidence or a measured defect
+- do not build generalized frameworks ahead of a selected gameplay need
+- do not add pooling or speculative mobile optimization without measurements
+- do not begin native-store packaging without an explicit platform/release milestone
 
 ## Standing laws
 

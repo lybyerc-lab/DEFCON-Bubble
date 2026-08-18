@@ -44,9 +44,11 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 ## Current development edge
 
-Foundation 0 and `[DB:COMBAT:DAMAGE]` are accepted. The bounded gameplay edge remains `[DB:COMBAT:POP]`: one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, and a phone-accessible feel check through the shared damage contract.
+Foundation 0, `[DB:COMBAT:DAMAGE]`, and `[DB:COMBAT:POP]` are accepted on `main`. The accepted POP proof establishes one basic bubble, one toothpick hit path, target-owned pop/despawn behavior, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
 
-Resolve live GitHub state before assuming the status of any POP branch or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
+The next bounded gameplay milestone is intentionally not selected in this file. Resolve live GitHub state, then use `docs/ACTIVE_HANDOFF.md` and current Game Director direction before creating the next feature branch.
+
+Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
 ## Semantic anchors
 

@@ -43,3 +43,9 @@ Do not lock permanent numeric budgets until a representative target-device matri
 ## DB-DEC-009 Preview delivery
 
 Phone-accessible Web previews should be built from reviewable GitHub source revisions through repeatable automation rather than depending on manual local uploads. Preview hosting is replaceable infrastructure and must not become a gameplay dependency. A preview should be traceable to the exact source revision it represents.
+
+## DB-DEC-010 Asset reuse and custom work
+
+Prefer a proven asset with an appropriate project-compatible license when it already meets a commodity need. Record its source, creator, license, license URL, and local integrity hash where practical.
+
+Use custom work when it materially expresses DEFCON BUBBLE's identity, solves a project-specific problem, or when available assets fail the creative or technical target. Do not prolong a bounded milestone by recreating a suitable commodity asset from scratch.
