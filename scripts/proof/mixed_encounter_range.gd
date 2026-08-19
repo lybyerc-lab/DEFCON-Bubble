@@ -40,10 +40,10 @@ func _fire_projectile() -> void:
 
 	var projectile: ToothpickProjectile = TOOTHPICK_SCENE.instantiate() as ToothpickProjectile
 	assert(projectile != null, "[DB:ENCOUNTER:MIXED_PROOF] Toothpick scene must instantiate.")
-	assert(
-		upgrade_choice.configure_projectile(projectile),
-		"[DB:UPGRADE:FIRST_CHOICE] Projectile configuration must succeed.",
-	)
+	# Run upgrades must configure every exported-build projectile, so this call
+	# never hides inside assert().
+	if not upgrade_choice.configure_projectile(projectile):
+		push_error("[DB:UPGRADE:FIRST_CHOICE] Projectile configuration must succeed.")
 	add_child(projectile)
 	projectile.global_position = projectile_origin.global_position
 

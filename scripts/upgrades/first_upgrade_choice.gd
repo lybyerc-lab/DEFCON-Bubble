@@ -74,10 +74,9 @@ func choose_upgrade(upgrade_id: StringName) -> bool:
 	_selected_upgrade = definition
 	_choice_pending = false
 	choice_applied.emit(definition.upgrade_id, definition.display_name)
-	assert(
-		encounter.release_intermission(),
-		"[DB:UPGRADE:FIRST_CHOICE] Upgrade choice must release the held intermission.",
-	)
+	# Release must run in exported builds too, so it never hides inside assert().
+	if not encounter.release_intermission():
+		push_error("[DB:UPGRADE:FIRST_CHOICE] Upgrade choice must release the held intermission.")
 	return true
 
 
@@ -97,10 +96,12 @@ func _on_encounter_state_changed(state: int) -> void:
 	if _selected_upgrade != null or _choice_pending:
 		return
 
-	assert(
-		encounter.hold_intermission(),
-		"[DB:UPGRADE:FIRST_CHOICE] Wave-1 clear must be holdable before the choice.",
-	)
+	# The hold must run in exported builds too, so it never hides inside assert().
+	# Without a held clock the choice would be decoration over a running encounter.
+	if not encounter.hold_intermission():
+		push_error("[DB:UPGRADE:FIRST_CHOICE] Wave-1 clear must be holdable before the choice.")
+		return
+
 	_choice_pending = true
 	choice_required.emit(options)
 

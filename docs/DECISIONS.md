@@ -49,3 +49,11 @@ Phone-accessible Web previews should be built from reviewable GitHub source revi
 Prefer a proven asset with an appropriate project-compatible license when it already meets a commodity need. Record its source, creator, license, license URL, and local integrity hash where practical.
 
 Use custom work when it materially expresses DEFCON BUBBLE's identity, solves a project-specific problem, or when available assets fail the creative or technical target. Do not prolong a bounded milestone by recreating a suitable commodity asset from scratch.
+
+## DB-DEC-011 Release-safe assertions
+
+Godot strips every `assert()` statement from release builds, including the expression inside it. An essential call placed inside an assert therefore runs on desktop and in CI but disappears from the exported mobile and Web builds, so automation can report green while the shipped build behaves differently.
+
+`assert()` is for debug-only invariant checks. Any call whose effect gameplay depends on must be made outside the assert, with failure reported through `push_error()` and handled explicitly.
+
+`scripts/check_release_safe_asserts.py` enforces this in Godot Verify. It allows only known pure predicates inside `assert()`; extend that allowlist only for methods that read state and change nothing.

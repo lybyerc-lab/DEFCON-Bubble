@@ -20,6 +20,9 @@ jobs:
       - name: Checkout exact source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Verify release builds keep essential calls out of assert()
+        run: python3 scripts/check_release_safe_asserts.py
+
       - name: Download pinned Godot editor
         shell: bash
         run: |
