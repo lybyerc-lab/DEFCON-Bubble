@@ -13,76 +13,43 @@ Accepted on `main`:
 - `[DB:CASTLE:IMPACT]` at `10cb2f20446c759dfa62a1303483552634fddda4`
 - `[DB:WAVE:FIRST_DEFENSE]` at `306f7a8c94fe55e17b7dd29850f9f327211ccb9c`
 - `[DB:ENCOUNTER:MIXED_THREE_WAVE]` at `942083789e8d7dc4c61e9aad78757d95eb083451`
+- `[DB:UPGRADE:FIRST_CHOICE]` at `56f62eac8370c6b065aab5926d3716a81ce3418f`
 
 The shared damage boundary remains `DamageRequest` -> `DamageReceiver` -> target-owned outcome. Native mobile is the product target, desktop is development/automation, and Web Compatibility is the rapid phone review surface.
 
 The phone-accepted mixed encounter establishes Basic/Brute, Fast/Runner, Heavy/Big Blub, one persistent two-health CastleChunk, roof-fired toothpicks, three authored escalating waves, readable intermissions/terminal states, pristine RETRY, and a presentation-only `BeachEnvironment`.
 
+The phone-accepted first upgrade choice establishes one run-scoped between-wave decision. `UpgradeDefinition` is data with stable IDs; `FirstUpgradeChoice` owns the single decision and applies its narrow effect; `MixedEncounter` exposes only a hold/release seam and still owns wave progression; the HUD forwards stable IDs and owns no effect. SKEWER takes toothpicks from 1 to 2 damage with a longer silhouette; SHELL REINFORCEMENT takes the castle from 2/2 to 3/3 without erasing damage history.
+
+Two engineering laws were promoted with it. Essential calls stay outside `assert()`, enforced in Godot Verify by `scripts/check_release_safe_asserts.py`, because Godot strips asserts from release builds and CI runs a debug binary. Only `main` deploys to the Pages review booth on push; feature branches are previewed through a deliberate `workflow_dispatch` run.
+
 ## Current bounded milestone
 
-`[DB:UPGRADE:FIRST_CHOICE]`
+No new gameplay milestone is selected yet.
 
-### Player-facing question
+Do not infer the next task from the remaining monster roster, from the upgrade seam that now exists, or from previously discussed systems. The next slice must be chosen deliberately from current design intent and must state one bounded player-facing question plus its phone acceptance target before implementation begins.
 
-After surviving Wave 1, does one tiny between-wave choice between **more popping power** and **more castle durability** make the next waves feel obviously different and worth choosing on a phone?
+`FirstUpgradeChoice` proves one authored decision. It is not permission to build a catalog, an economy, a second upgrade tier, or a progression system without a new bounded question.
 
-### Exact proof
+The approved but not-yet-implemented roster still includes Stiltwalker, Weaver, Mutant, and Bubble King. Their concept roles are not permission to invent mechanics early.
 
-Wave 1 clear enters the accepted INTERMISSION state, then the upgrade authority holds its 2.25-second clock until exactly one stable-ID choice is made:
+## Must not drift into
 
-- **SKEWER** (`upgrade:weapon:skewer`)
-  - +1 damage to newly fired toothpicks for the rest of the run
-  - base 1 damage becomes 2
-  - projectile silhouette becomes 1.55x longer
-  - five-health Big Blub therefore requires three Skewer hits instead of five base hits
-
-- **SHELL REINFORCEMENT** (`upgrade:defense:shell_reinforcement`)
-  - +1 maximum and current CastleChunk durability
-  - the two-health castle becomes three-health without erasing any existing damage history
-  - pale shell bands are presentation-only evidence of the added protection
-
-After the choice, the authored 2.25-second intermission starts and the existing Wave 2 / Wave 3 schedules proceed unchanged.
-
-### Ownership
-
-- `UpgradeDefinition` is data only and owns stable ID/display/tunable effect values.
-- `FirstUpgradeChoice` owns this one run-scoped decision, the selected stable ID, and the narrow gameplay effect application.
-- `MixedEncounter` gains only a generic hold/release seam for its existing intermission clock; it still owns wave progression.
-- `ToothpickProjectile` owns its configured damage request and travel; upgrade state does not own hits or POP.
-- `CastleChunk` owns added durability and all subsequent damage/destruction truth.
-- Upgrade HUD renders definitions and sends stable choice IDs; it owns no effect.
-- Castle and Skewer visuals remain presentation-only.
-
-### Phone acceptance target
-
-- Wave 1 clear visibly presents two large, readable choices without accidental FIRE input behind the overlay.
-- The choice waits for the player rather than timing out.
-- SKEWER is visually longer and makes Big Blub's reduced hit count obvious.
-- SHELL REINFORCEMENT immediately changes the HUD to `CASTLE: 3 / 3` when chosen at full health and visibly adds shell armor bands.
-- Only one upgrade can be taken per run.
-- Wave 2 and FINAL PUSH retain their accepted timing, enemy behavior, POP, damage, win/loss, and RETRY contracts.
-- RESET/RETRY starts a pristine run with no upgrade selected.
-- deterministic upgrade proof, all prior regression fixtures, headless boot, Web export, and exact-source Pages delivery pass.
-
-## Non-goals
-
-- no currency, rewards economy, shop, prices, rarity, rerolls, inventory, or permanent meta progression
-- no repair crabs or castle repair timing
-- no generalized upgrade tree/catalog UI beyond the two explicit definitions needed by this proof
-- no new weapon family beyond the one Skewer damage/length upgrade
-- no new castle chunks/material simulation beyond the one durability hook
-- no wave timing or enemy rebalance
-- no new monster archetype
-- no save schema or storefront work
+- generalized upgrade catalogs, currencies, shops, rarity, rerolls, or meta progression because one choice now exists
+- generalized wave DSLs, registries, procedural spawning, or universal navigation without a concrete need
+- multiple lanes/chunks, repair, or economy merely because they are future possibilities
+- new weapons or enemy mechanics without a bounded gameplay question
+- reopening accepted POP, castle, encounter, or upgrade behavior without new player evidence or a measured defect
+- pooling or speculative optimization without measurements
+- native-store packaging before platform/store priority is deliberately selected
 
 ## Immediate sequence
 
-1. Implement the two stable definitions and bounded run-choice authority on `agent/first-upgrade-choice`.
-2. Preserve all accepted encounter regression tests and add `[DB:TEST:FIRST_UPGRADE_CHOICE]`.
-3. Build/deploy the exact feature head to the phone review booth.
-4. Judge choice readability, Skewer payoff, Shell payoff, intermission rhythm, and pristine reset on a phone.
-5. Tune only evidenced defects inside this milestone.
-6. Promote only after explicit Game Director acceptance.
+1. Keep accepted `main` green and recoverable.
+2. Resolve current Game Director intent and live repo state before selecting the next milestone.
+3. Define the next bounded player-facing question, ownership boundaries, non-goals, and phone acceptance gate.
+4. Create a fresh feature branch only after that scope is explicit.
+5. Promote only after automation is green and the relevant player-facing behavior is accepted on a phone.
 
 ## Standing laws
 
@@ -91,5 +58,7 @@ After the choice, the authored 2.25-second intermission starts and the existing 
 - Touch UI requests player intent; it never becomes combat authority.
 - Keep `main` buildable.
 - Automation proves; promotion is deliberate.
+- Automation must exercise what the exported build actually runs; keep essential calls outside `assert()`.
+- The Pages review booth serves `main` on push; branch previews are deliberate.
 - Player-facing mobile behavior needs representative phone/touch evidence.
 - No secrets in Git and no new dependency without explicit justification/provenance.

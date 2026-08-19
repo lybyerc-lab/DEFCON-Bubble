@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, First Defense, and the phone-accepted mixed three-wave Basic/Fast/Heavy encounter are accepted on `main`. The current bounded edge is `[DB:UPGRADE:FIRST_CHOICE]`: one safe post-Wave-1 choice between a two-damage longer Skewer and +1 Shell Reinforcement durability, with no currency or progression tree. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, First Defense, the phone-accepted mixed three-wave Basic/Fast/Heavy encounter, and `[DB:UPGRADE:FIRST_CHOICE]` are accepted on `main`. The upgrade edge is one safe post-Wave-1 choice between a two-damage longer Skewer and +1 Shell Reinforcement durability, with no currency or progression tree. The next bounded milestone is intentionally open. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
