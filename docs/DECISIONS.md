@@ -57,3 +57,11 @@ Godot strips every `assert()` statement from release builds, including the expre
 `assert()` is for debug-only invariant checks. Any call whose effect gameplay depends on must be made outside the assert, with failure reported through `push_error()` and handled explicitly.
 
 `scripts/check_release_safe_asserts.py` enforces this in Godot Verify. It allows only known pure predicates inside `assert()`; extend that allowlist only for methods that read state and change nothing.
+
+## DB-DEC-012 Branch preview deliberateness
+
+The GitHub Pages review booth is a single site. Whichever build deploys last owns the URL, so an automatic branch deploy silently replaces the `main` preview and leaves the live booth untraceable, which DB-DEC-009 forbids.
+
+Only `main` deploys on push. Preview a feature branch through an explicit `workflow_dispatch` run on that branch, re-dispatch after each push while it is under review, and return the booth to `main` when review finishes.
+
+Do not add a feature branch to the push trigger. That edit has to be undone before promotion, and forgetting to undo it leaves the booth serving a merged branch indefinitely.

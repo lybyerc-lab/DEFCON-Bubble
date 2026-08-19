@@ -1,10 +1,17 @@
 name: GitHub Pages Preview
 
+# [DB:PLATFORM:WEB_PREVIEW]
+# Only `main` deploys automatically. The Pages site is a single review booth, so
+# an automatic branch deploy would silently replace the `main` preview and break
+# the DB-DEC-009 guarantee that the live preview is traceable to a known
+# revision. Preview a feature branch deliberately instead:
+#   Actions -> GitHub Pages Preview -> Run workflow -> pick the branch
+# Re-run it after every push to that branch while it is under review, and push
+# or re-dispatch `main` to hand the booth back when review is finished.
 on:
   push:
     branches:
       - main
-      - agent/first-upgrade-choice
   workflow_dispatch:
 
 permissions:
