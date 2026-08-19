@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. The current gameplay edge adds the approved seven-monster visual roster, a five-hit slow Big Blub siege tank, a castle-roof toothpick launcher, and one authored three-wave Basic/Fast/Heavy encounter. Beach presentation is a reusable environment scene composed separately from gameplay. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, `[DB:WAVE:FIRST_DEFENSE]`, and `[DB:ENCOUNTER:MIXED_THREE_WAVE]` are accepted on `main`. The accepted gameplay edge now includes the faceless bubble-monster family, Fast/Runner, five-hit Big Blub, a castle-roof toothpick launcher, one persistent two-health castle, an authored three-wave Basic/Fast/Heavy encounter, and separately composed beach presentation. The next gameplay milestone is intentionally open until one bounded player-facing question and acceptance target are selected. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
