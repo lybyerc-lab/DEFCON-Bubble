@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, `[DB:WAVE:FIRST_DEFENSE]`, and `[DB:ENCOUNTER:MIXED_THREE_WAVE]` are accepted on `main`. The accepted gameplay edge now includes the faceless bubble-monster family, Fast/Runner, five-hit Big Blub, a castle-roof toothpick launcher, one persistent two-health castle, an authored three-wave Basic/Fast/Heavy encounter, and separately composed beach presentation. The next gameplay milestone is intentionally open until one bounded player-facing question and acceptance target are selected. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, First Defense, and the phone-accepted mixed three-wave Basic/Fast/Heavy encounter are accepted on `main`. The current bounded edge is `[DB:UPGRADE:FIRST_CHOICE]`: one safe post-Wave-1 choice between a two-damage longer Skewer and +1 Shell Reinforcement durability, with no currency or progression tree. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
@@ -59,6 +59,7 @@ godot --headless --path . --script res://tests/bubble_creature_smoke.gd
 godot --headless --path . --script res://tests/heavy_bubble_smoke.gd
 godot --headless --path . --script res://tests/environment_structure_smoke.gd
 godot --headless --path . --script res://tests/mixed_encounter_smoke.gd
+godot --headless --path . --script res://tests/first_upgrade_choice_smoke.gd
 ```
 
 ## Phone review booth

@@ -22,6 +22,7 @@ func _ready() -> void:
 	encounter.wave_changed.connect(_on_wave_changed)
 	encounter.remaining_changed.connect(_on_remaining_changed)
 	castle_chunk.damaged.connect(_on_castle_damaged)
+	castle_chunk.reinforced.connect(_on_castle_reinforced)
 	castle_chunk.destroyed.connect(_on_castle_destroyed)
 
 	_on_wave_changed(encounter.current_wave_number(), encounter.total_wave_count(), encounter.current_wave_title())
@@ -59,6 +60,15 @@ func _on_castle_damaged(
 	_chunk_id: StringName,
 	remaining_health: float,
 	maximum_health: float,
+) -> void:
+	_update_castle_health(remaining_health, maximum_health)
+
+
+func _on_castle_reinforced(
+	_chunk_id: StringName,
+	remaining_health: float,
+	maximum_health: float,
+	_added_durability: float,
 ) -> void:
 	_update_castle_health(remaining_health, maximum_health)
 

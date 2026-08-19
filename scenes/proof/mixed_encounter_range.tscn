@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Script" path="res://scripts/proof/mixed_encounter_range.gd" id="1_range"]
 [ext_resource type="PackedScene" path="res://scenes/castle/castle_chunk.tscn" id="2_castle"]
@@ -6,6 +6,11 @@
 [ext_resource type="Script" path="res://scripts/waves/encounter_spawn_plan.gd" id="4_spawn_plan"]
 [ext_resource type="Script" path="res://scripts/waves/encounter_wave_plan.gd" id="5_wave_plan"]
 [ext_resource type="Script" path="res://scripts/presentation/mixed_encounter_hud.gd" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/upgrades/first_upgrade_choice.gd" id="7_upgrade_choice"]
+[ext_resource type="Script" path="res://scripts/presentation/first_upgrade_hud.gd" id="8_upgrade_hud"]
+[ext_resource type="Script" path="res://scripts/upgrades/upgrade_definition.gd" id="9_upgrade_definition"]
+[ext_resource type="Resource" path="res://data/upgrades/skewer.tres" id="10_skewer"]
+[ext_resource type="Resource" path="res://data/upgrades/shell_reinforcement.tres" id="11_shell"]
 
 [sub_resource type="Resource" id="Spawn_w1_01"]
 script = ExtResource("4_spawn_plan")
@@ -148,6 +153,13 @@ position = Vector3(6, 1, 0)
 
 [node name="BubbleContainer" type="Node3D" parent="MixedEncounter"]
 
+[node name="FirstUpgradeChoice" type="Node" parent="."]
+script = ExtResource("7_upgrade_choice")
+options = Array[ExtResource("9_upgrade_definition")]([ExtResource("10_skewer"), ExtResource("11_shell")])
+trigger_after_wave = 1
+encounter_path = NodePath("../MixedEncounter")
+castle_chunk_path = NodePath("../CastleChunk")
+
 [node name="TouchHUD" type="CanvasLayer" parent="."]
 
 [node name="EncounterHUD" type="Control" parent="TouchHUD"]
@@ -258,3 +270,113 @@ theme_override_styles/normal = SubResource("StyleBox_fire_normal")
 theme_override_styles/hover = SubResource("StyleBox_fire_hover")
 theme_override_styles/pressed = SubResource("StyleBox_fire_pressed")
 text = "FIRE!"
+
+[node name="UpgradeHUD" type="Control" parent="TouchHUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_upgrade_hud")
+upgrade_choice_path = NodePath("../../FirstUpgradeChoice")
+
+[node name="ChoiceOverlay" type="Control" parent="TouchHUD/UpgradeHUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Backdrop" type="ColorRect" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.05, 0.06, 0.72)
+
+[node name="Panel" type="ColorRect" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.14
+anchor_top = 0.18
+anchor_right = 0.86
+anchor_bottom = 0.82
+mouse_filter = 2
+color = Color(0.15, 0.11, 0.06, 0.96)
+
+[node name="TitleLabel" type="Label" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.20
+anchor_top = 0.23
+anchor_right = 0.80
+anchor_bottom = 0.32
+theme_override_colors/font_color = Color(1, 0.87, 0.42, 1)
+theme_override_colors/font_shadow_color = Color(0.05, 0.02, 0.01, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 38
+text = "BEACH TECH - PICK ONE"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.20
+anchor_top = 0.34
+anchor_right = 0.80
+anchor_bottom = 0.41
+theme_override_colors/font_color = Color(0.92, 0.96, 0.86, 1)
+theme_override_font_sizes/font_size = 23
+text = "ONE CHOICE. THE NEXT WAVES KEEP IT."
+horizontal_alignment = 1
+
+[node name="WeaponButton" type="Button" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.20
+anchor_top = 0.48
+anchor_right = 0.48
+anchor_bottom = 0.72
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.97, 0.83, 1)
+theme_override_font_sizes/font_size = 27
+text = "SKEWER\n+1 POP POWER - 2 DAMAGE"
+
+[node name="DefenseButton" type="Button" parent="TouchHUD/UpgradeHUD/ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.52
+anchor_top = 0.48
+anchor_right = 0.80
+anchor_bottom = 0.72
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.97, 0.83, 1)
+theme_override_font_sizes/font_size = 27
+text = "SHELL REINFORCEMENT\n+1 CASTLE DURABILITY"
+
+[node name="ActiveUpgradeLabel" type="Label" parent="TouchHUD/UpgradeHUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.32
+anchor_top = 0.105
+anchor_right = 0.68
+anchor_bottom = 0.16
+theme_override_colors/font_color = Color(1, 0.87, 0.42, 1)
+theme_override_colors/font_shadow_color = Color(0.05, 0.02, 0.01, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+text = "UPGRADE: NONE"
+horizontal_alignment = 1

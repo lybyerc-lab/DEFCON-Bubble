@@ -1,12 +1,13 @@
 extends Node3D
 
 # [DB:ENCOUNTER:MIXED_PROOF]
-# Player-intent and retry glue for the bounded three-wave phone proof.
+# Player-intent, run-upgrade integration, and retry glue for the bounded phone proof.
 
 const TOOTHPICK_SCENE: PackedScene = preload("res://scenes/weapons/toothpick_projectile.tscn")
 const FIRE_ACTION: StringName = &"fire_primary"
 
 @onready var encounter: MixedEncounter = $MixedEncounter
+@onready var upgrade_choice: FirstUpgradeChoice = $FirstUpgradeChoice
 @onready var projectile_origin: Marker3D = $CastleChunk/ProjectileOrigin
 @onready var touch_controls: Control = $TouchHUD/TouchControls
 @onready var fire_button: Button = $TouchHUD/TouchControls/FireButton
@@ -15,6 +16,7 @@ const FIRE_ACTION: StringName = &"fire_primary"
 
 func _ready() -> void:
 	assert(encounter != null, "[DB:ENCOUNTER:MIXED_PROOF] MixedEncounter is required.")
+	assert(upgrade_choice != null, "[DB:UPGRADE:FIRST_CHOICE] FirstUpgradeChoice is required.")
 	assert(projectile_origin != null, "[DB:ENCOUNTER:MIXED_PROOF] ProjectileOrigin is required.")
 	assert(touch_controls != null, "[DB:INPUT:TOUCH_PROOF] TouchControls is required.")
 	assert(fire_button != null, "[DB:INPUT:TOUCH_PROOF] FireButton is required.")
@@ -38,6 +40,10 @@ func _fire_projectile() -> void:
 
 	var projectile: ToothpickProjectile = TOOTHPICK_SCENE.instantiate() as ToothpickProjectile
 	assert(projectile != null, "[DB:ENCOUNTER:MIXED_PROOF] Toothpick scene must instantiate.")
+	assert(
+		upgrade_choice.configure_projectile(projectile),
+		"[DB:UPGRADE:FIRST_CHOICE] Projectile configuration must succeed.",
+	)
 	add_child(projectile)
 	projectile.global_position = projectile_origin.global_position
 

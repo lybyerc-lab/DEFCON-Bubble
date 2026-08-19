@@ -6,6 +6,12 @@ extends Area3D
 # destruction truth. DamageReceiver routes requests; presentation observes signals.
 
 signal damaged(chunk_id: StringName, remaining_health: float, maximum_health: float)
+signal reinforced(
+	chunk_id: StringName,
+	remaining_health: float,
+	maximum_health: float,
+	added_durability: float,
+)
 signal destroyed(chunk_id: StringName)
 
 @export_category("Castle Chunk Identity")
@@ -40,6 +46,19 @@ func is_damaged() -> bool:
 
 func is_destroyed() -> bool:
 	return _is_destroyed
+
+
+func add_durability(amount: float) -> bool:
+	# [DB:UPGRADE:CASTLE_DURABILITY]
+	# Adds new protection instead of healing old damage. Current and maximum
+	# durability rise together, so any existing sand wound remains meaningful.
+	if _is_destroyed or amount <= 0.0:
+		return false
+
+	max_health += amount
+	_health += amount
+	reinforced.emit(chunk_id, _health, max_health, amount)
+	return true
 
 
 func _on_damage_requested(request: DamageRequest) -> void:

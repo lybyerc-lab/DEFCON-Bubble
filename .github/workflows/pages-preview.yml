@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - agent/first-upgrade-choice
   workflow_dispatch:
 
 permissions:
@@ -70,6 +71,7 @@ jobs:
           "${godot_bin}" --headless --path . --script res://tests/heavy_bubble_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/environment_structure_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/mixed_encounter_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/first_upgrade_choice_smoke.gd
           "${godot_bin}" --headless --path . --quit-after 3
           test -f build/web/index.html
 
