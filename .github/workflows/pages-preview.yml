@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - agent/first-defense-wave
+      - agent/fast-bubble-encounter
   workflow_dispatch:
 
 permissions:
@@ -66,6 +66,11 @@ jobs:
           "${godot_bin}" --headless --path . --script res://tests/pop_proof_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/castle_impact_smoke.gd
           "${godot_bin}" --headless --path . --script res://tests/first_defense_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/fast_bubble_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/bubble_creature_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/heavy_bubble_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/environment_structure_smoke.gd
+          "${godot_bin}" --headless --path . --script res://tests/mixed_encounter_smoke.gd
           "${godot_bin}" --headless --path . --quit-after 3
           test -f build/web/index.html
 

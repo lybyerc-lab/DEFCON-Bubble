@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="Material_sand"]
+albedo_color = Color(0.78, 0.58, 0.31, 1)
+roughness = 0.96
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_sand"]
+material = SubResource("Material_sand")
+size = Vector2(24, 12)
+
+[sub_resource type="StandardMaterial3D" id="Material_water"]
+transparency = 1
+albedo_color = Color(0.12, 0.58, 0.72, 0.78)
+metallic = 0.05
+roughness = 0.12
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
+material = SubResource("Material_water")
+size = Vector2(24, 10)
+
+[sub_resource type="StandardMaterial3D" id="Material_foam"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.9, 0.98, 1, 0.62)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_foam"]
+material = SubResource("Material_foam")
+size = Vector2(24, 0.38)
+
+[node name="BeachEnvironment" type="Node3D"]
+
+[node name="Sand" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_sand")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.045, -9)
+mesh = SubResource("PlaneMesh_water")
+
+[node name="ShoreFoam" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.006, -4.15)
+mesh = SubResource("PlaneMesh_foam")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-45, -30, 0)
+light_color = Color(1, 0.88, 0.68, 1)
+light_energy = 1.15
+shadow_enabled = true

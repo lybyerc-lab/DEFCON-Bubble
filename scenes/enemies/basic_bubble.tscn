@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/basic_bubble.gd" id="1_bubble"]
 [ext_resource type="Script" path="res://scripts/combat/damage_receiver.gd" id="2_receiver"]
 [ext_resource type="Script" path="res://scripts/presentation/bubble_pop_fx.gd" id="3_pop_fx"]
 [ext_resource type="AudioStream" path="res://assets/audio/bubble_pop_cc0.wav" id="4_pop_audio"]
+[ext_resource type="Script" path="res://scripts/presentation/bubble_creature_fx.gd" id="5_creature_fx"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_bubble"]
 radius = 0.65
@@ -16,6 +17,25 @@ radius = 0.65
 radius = 0.72
 height = 1.44
 
+[sub_resource type="StandardMaterial3D" id="Material_appendage_bubble"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.58, 0.86, 1, 0.42)
+metallic = 0.0
+roughness = 0.06
+
+[sub_resource type="SphereMesh" id="SphereMesh_segment"]
+radius = 0.082
+height = 0.164
+
+[sub_resource type="SphereMesh" id="SphereMesh_foot"]
+radius = 0.13
+height = 0.18
+
+[sub_resource type="SphereMesh" id="SphereMesh_horn"]
+radius = 0.072
+height = 0.144
+
 [node name="BasicBubble" type="Area3D"]
 collision_layer = 8
 collision_mask = 36
@@ -26,7 +46,113 @@ script = ExtResource("1_bubble")
 [node name="Visual" type="Node3D" parent="."]
 
 [node name="BubbleMesh" type="MeshInstance3D" parent="Visual"]
+scale = Vector3(0.88, 1.18, 0.82)
 mesh = SubResource("SphereMesh_bubble")
+
+[node name="CreatureRig" type="Node3D" parent="Visual"]
+
+[node name="LeftLegPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.22, -0.54, 0)
+
+[node name="UpperBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftLegPivot"]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LowerBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftLegPivot"]
+position = Vector3(-0.015, -0.25, 0)
+scale = Vector3(0.88, 0.88, 0.88)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/CreatureRig/LeftLegPivot"]
+position = Vector3(-0.055, -0.4, 0.08)
+scale = Vector3(1.35, 0.72, 1.35)
+mesh = SubResource("SphereMesh_foot")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="RightLegPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0.22, -0.54, 0)
+
+[node name="UpperBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightLegPivot"]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LowerBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightLegPivot"]
+position = Vector3(-0.015, -0.25, 0)
+scale = Vector3(0.88, 0.88, 0.88)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/CreatureRig/RightLegPivot"]
+position = Vector3(-0.055, -0.4, 0.08)
+scale = Vector3(1.35, 0.72, 1.35)
+mesh = SubResource("SphereMesh_foot")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LeftArmPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.59, -0.05, 0)
+rotation_degrees = Vector3(0, 0, -18)
+
+[node name="UpperBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftArmPivot"]
+position = Vector3(0, -0.09, 0)
+scale = Vector3(0.82, 0.82, 0.82)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LowerBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftArmPivot"]
+position = Vector3(0, -0.21, 0)
+scale = Vector3(0.68, 0.68, 0.68)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="RightArmPivot" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0.59, -0.05, 0)
+rotation_degrees = Vector3(0, 0, 18)
+
+[node name="UpperBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightArmPivot"]
+position = Vector3(0, -0.09, 0)
+scale = Vector3(0.82, 0.82, 0.82)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LowerBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightArmPivot"]
+position = Vector3(0, -0.21, 0)
+scale = Vector3(0.68, 0.68, 0.68)
+mesh = SubResource("SphereMesh_segment")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="LeftHorn" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(-0.29, 0.64, 0.02)
+rotation_degrees = Vector3(0, 0, -25)
+
+[node name="BaseBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftHorn"]
+mesh = SubResource("SphereMesh_horn")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="TipBubble" type="MeshInstance3D" parent="Visual/CreatureRig/LeftHorn"]
+position = Vector3(0, 0.115, 0)
+scale = Vector3(0.68, 0.68, 0.68)
+mesh = SubResource("SphereMesh_horn")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="RightHorn" type="Node3D" parent="Visual/CreatureRig"]
+position = Vector3(0.29, 0.64, 0.02)
+rotation_degrees = Vector3(0, 0, 25)
+
+[node name="BaseBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightHorn"]
+mesh = SubResource("SphereMesh_horn")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="TipBubble" type="MeshInstance3D" parent="Visual/CreatureRig/RightHorn"]
+position = Vector3(0, 0.115, 0)
+scale = Vector3(0.68, 0.68, 0.68)
+mesh = SubResource("SphereMesh_horn")
+material_override = SubResource("Material_appendage_bubble")
+
+[node name="BubbleCreatureFx" type="Node3D" parent="."]
+script = ExtResource("5_creature_fx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape_bubble")

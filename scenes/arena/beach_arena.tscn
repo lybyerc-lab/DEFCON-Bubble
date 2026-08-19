@@ -1,22 +1,15 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/proof/first_defense_range.tscn" id="1_first_defense"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
-size = Vector2(24, 10)
+[ext_resource type="PackedScene" path="res://scenes/proof/mixed_encounter_range.tscn" id="1_mixed_encounter"]
+[ext_resource type="PackedScene" path="res://scenes/environment/beach_environment.tscn" id="2_environment"]
 
 [node name="BeachArena" type="Node3D"]
 
-[node name="Ground" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_ground")
+[node name="BeachEnvironment" parent="." instance=ExtResource("2_environment")]
 
-[node name="FirstDefenseRange" parent="." instance=ExtResource("1_first_defense")]
+[node name="MixedEncounterRange" parent="." instance=ExtResource("1_mixed_encounter")]
 
 [node name="Camera3D" type="Camera3D" parent="."]
 position = Vector3(0, 6, 12)
 rotation_degrees = Vector3(-22, 0, 0)
 current = true
-
-[node name="Sun" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-45, -30, 0)
-shadow_enabled = true

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/enemies/basic_bubble.tscn" id="1_basic"]
+[ext_resource type="Script" path="res://scripts/presentation/heavy_bubble_fx.gd" id="2_heavy_fx"]
+
+[node name="HeavyBubble" instance=ExtResource("1_basic")]
+scale = Vector3(1.7, 1.7, 1.7)
+bubble_id = &"enemy:heavy_bubble:proof"
+max_health = 5.0
+advance_speed_mps = 0.55
+
+[node name="HeavyBubbleFx" type="Node3D" parent="."]
+script = ExtResource("2_heavy_fx")

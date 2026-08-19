@@ -24,7 +24,7 @@ The product direction is mobile-first:
 
 ## Accepted gameplay edge
 
-`[DB:COMBAT:POP]` is accepted on `main` at `98ce22ed5f119bbb9d4adfc3f72e8468b1aafe58`. `[DB:CASTLE:IMPACT]` is accepted on `main` at `10cb2f20446c759dfa62a1303483552634fddda4`.
+`[DB:COMBAT:POP]` is accepted on `main` at `98ce22ed5f119bbb9d4adfc3f72e8468b1aafe58`. `[DB:CASTLE:IMPACT]` is accepted at `10cb2f20446c759dfa62a1303483552634fddda4`. `[DB:WAVE:FIRST_DEFENSE]` is accepted on `main` at `306f7a8c94fe55e17b7dd29850f9f327211ccb9c`.
 
 The accepted proofs establish:
 - one basic bubble receiving a typed `PIERCE` request from one toothpick
@@ -36,58 +36,66 @@ The accepted proofs establish:
 - one Bubble #1 advancing toward one modular CastleChunk
 - exactly one typed `IMPACT` per leaked bubble
 - chunk-owned health, local visible damage, collision shutdown, and destruction
+- one fixed three-BasicBubble wave with unique IDs, authoritative outcome, readable HUD, and RETRY
 
-The Game Director accepted both the final POP sound and the castle success/failure paths on a phone. Resolve live GitHub state for exact merge SHAs and current automation status.
+The Game Director accepted the final POP sound, castle success/failure paths, and First Defense encounter on a phone.
 
 ## Current bounded milestone
 
-`[DB:WAVE:FIRST_DEFENSE]` is the current gameplay milestone.
+`[DB:ENCOUNTER:MIXED_THREE_WAVE]` is the current gameplay milestone.
 
-Prove one short defensive encounter with exactly three ordinary BasicBubbles attacking the existing one modular CastleChunk. Bubbles spawn at x=6.0, retain the accepted 1.25 m/s speed, and enter on a fixed 1.6 second stagger.
+Present Basic and Fast enemies as faceless, elongated bipedal bubble monsters. Their horns, arms, segmented legs, and feet are smaller translucent bubbles driven by a presentation-only walk cycle. Introduce Fast Bubble as inherited BasicBubble gameplay at 2.25 m/s with a smaller forgiving 0.85 root/collision scale and an unmistakable acid-lime 4 Hz pulse. In the mixed range, move the persistent two-health CastleChunk to x=-4.4 and fire toothpicks from a marker parented to its roof.
 
-The proof must preserve the accepted toothpick, POP, impact, castle, and reset paths without reopening their ownership or presentation tuning.
+The authored schedule is BASIC TRAINING (`basic` at 0.0, 1.6, 3.2), FAST BUBBLES (`fast` 0.0, `basic` 1.2, `fast` 4.2, `basic` 5.4), and FINAL PUSH (`heavy` 0.0, `fast` 0.9, `basic` 2.0, `fast` 5.1, 6.0). Intermissions are exactly 2.25 seconds with no clock carry.
 
 ### Acceptance target
 
-- authoritative encounter state moves only through READY, RUNNING, WON, and LOST
-- exactly three uniquely identified BasicBubbles spawn from one point, never a fourth
-- spawn timing is delta-scaled, catches up safely after a long frame, and uses a 1.6 second stagger
-- all three resolved bubbles with the castle alive produce WON, including a damaged-but-surviving castle
-- castle destruction produces LOST immediately, cancels pending spawns, and stops surviving bubbles from advancing
-- phone-readable UI observes remaining bubbles, castle health, and terminal state without owning outcomes
+- Fast Bubble retains one health, one IMPACT, accepted POP/despawn, and BasicBubble gameplay ownership
+- Big Blub inherits the same ownership with five health, `0.55 m/s` advance, a 1.7 scale, wide silhouette, and slow presentation-only gait
+- Basic and Fast both inherit the same readable bipedal monster rig; its animation never changes movement, collision, damage, or outcome
+- creature limbs disappear on authoritative POP so the accepted membrane rupture remains the death read
+- no eyes, pupils, brows, or mouth remain; silhouette and motion carry the creature identity
+- the mixed-range castle is farther left and owns the roof launcher transform; toothpick damage and travel remain unchanged
+- `BeachEnvironment` owns sand, water, shoreline, and sunlight while the arena separately composes encounter gameplay and camera
+- authoritative encounter state moves only through READY, WAVE_ACTIVE, INTERMISSION, WON, and LOST
+- small typed `EncounterSpawnPlan` and `EncounterWavePlan` Resources hold only the exact kind/time and wave identity/title
+- every authored spawn receives a unique wave+slot ID; duplicate, foreign, stale, and terminal callbacks cannot mutate truth
+- wave progression waits for all authored threats to spawn and resolve; only FINAL PUSH clear wins
+- the same CastleChunk health persists across all waves; its second lifetime leak loses immediately
+- loss cancels current/future spawns and stops every surviving bubble without declaring it dead
+- phone-readable HUD shows wave X/3, current-wave LEFT, castle health, incoming/clear/next/final messaging, and the terminal RETRY affordance
+- automation proves the RETRY control state; actual scene reload/restart behavior remains a phone runtime acceptance gate
 - deterministic positive and negative fixtures pass under pinned Godot 4.7.1
 - exact-source Web preview builds and deploys for phone judgment
 
 ## Live candidate status
 
-The current candidate is intentionally draft and unmerged. This in-repository snapshot records the implementation commit; always resolve the live PR head because documentation-only follow-ups necessarily advance the branch:
+The current candidate is local and uncommitted until the implementation, pinned tests, and exact-source preview are reviewed:
 
-- branch: `agent/first-defense-wave`
-- implementation commit: `2ca6787c974931a98dde8c867fa97dcba75677c1`
-- base: accepted `main` at `10cb2f20446c759dfa62a1303483552634fddda4`
-- pull request: [#8](https://github.com/lybyerc-lab/DEFCON-Bubble/pull/8)
-- Godot Verify #32: passed at run `32174264479`
-- GitHub Pages Preview: passed at run `32174232764`
-- phone review booth: <https://lybyerc-lab.github.io/DEFCON-Bubble/>
+- branch: `agent/fast-bubble-encounter`
+- base: accepted `main` at `306f7a8c94fe55e17b7dd29850f9f327211ccb9c`
+- pull request: none yet
+- pinned Godot 4.7.1 local verification: passed (import, all ten fixtures, and headless boot)
+- exact-source Pages preview: pending
 
-Pinned Godot 4.7.1 executed the full foundation, damage, POP, castle-impact, first-defense, import, and headless-boot gates on that implementation commit. The Game Director's phone verdict is still pending. Do not mark PR #8 ready or merge it until that player-facing acceptance is explicit.
+FirstDefenseWave, its range, HUD, and deterministic test remain unchanged as frozen accepted regression proof.
 
 ## Immediate sequence
 
-After re-verifying the live candidate:
+After completing the local candidate:
 
-1. Judge pressure, firing rhythm, starting distance, status readability, terminal clarity, and replay behavior on a phone.
-2. Confirm both outcomes: three resolved bubbles hold the castle; two leaked bubbles destroy it.
-3. If evidence identifies a defect, make only one bounded scene-timing, spacing, control-state, or presentation adjustment.
-4. Re-run pinned Godot verification and exact-source Pages deployment after any candidate change.
-5. Mark PR #8 ready and promote only after explicit Game Director acceptance.
+1. Publish the draft candidate and confirm the exact-source CI and Web preview.
+2. Confirm Fast Bubble's lime identity and speed remain readable on a phone without changing accepted POP.
+3. Confirm authored wave timing, persistent one-leak damage, second-leak defeat, intermission controls, final victory, and actual RETRY scene reload on a phone.
+4. Tune only an evidenced Fast presentation or authored timing defect within this milestone.
+5. Promote only after explicit Game Director acceptance.
 
 ## Must not drift into
 
-- multiple lanes or chunks, full castle orchestration, or tactical target-priority claims
-- reusable wave definitions, procedural spawning, or generalized enemy navigation
+- multiple lanes or chunks, aiming, full castle orchestration, or tactical target-priority claims
+- registries, reusable wave DSLs, procedural spawning, or generalized enemy navigation
 - repair, upgrades, progression, rewards, or economy
-- new weapons, additional bubble types, or per-bubble stat variation
+- new weapons, additional bubble types, or new sounds
 - reopening accepted POP tuning without new player evidence or a measured defect
 - pooling or speculative mobile optimization without measurements
 - native-store packaging
