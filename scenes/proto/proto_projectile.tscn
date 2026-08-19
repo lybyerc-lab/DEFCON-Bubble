@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/proto/proto_projectile.gd" id="1_proto_projectile"]
+
+[sub_resource type="StandardMaterial3D" id="Material_toothpick"]
+albedo_color = Color(0.98, 0.93, 0.76, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_toothpick"]
+material = SubResource("Material_toothpick")
+size = Vector3(0.06, 0.06, 0.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape_toothpick"]
+size = Vector3(0.16, 0.16, 0.9)
+
+[node name="ProtoProjectile" type="Area3D"]
+collision_layer = 4
+collision_mask = 8
+monitoring = true
+monitorable = true
+script = ExtResource("1_proto_projectile")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_toothpick")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape_toothpick")

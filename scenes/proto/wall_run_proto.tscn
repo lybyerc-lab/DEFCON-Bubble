@@ -1,0 +1,83 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/proto/wall_run_proto.gd" id="1_proto"]
+[ext_resource type="PackedScene" path="res://scenes/environment/beach_environment.tscn" id="2_environment"]
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+albedo_color = Color(0.86, 0.71, 0.44, 1)
+roughness = 0.93
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+material = SubResource("Material_wall")
+size = Vector3(18, 1.2, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="Material_player"]
+albedo_color = Color(0.93, 0.29, 0.21, 1)
+roughness = 0.55
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+material = SubResource("Material_player")
+radius = 0.17
+height = 0.78
+
+[sub_resource type="StandardMaterial3D" id="Material_player_head"]
+albedo_color = Color(0.99, 0.85, 0.7, 1)
+roughness = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_player_head"]
+material = SubResource("Material_player_head")
+radius = 0.16
+height = 0.32
+
+[node name="WallRunProto" type="Node3D"]
+script = ExtResource("1_proto")
+
+[node name="BeachEnvironment" parent="." instance=ExtResource("2_environment")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.6, 0)
+mesh = SubResource("BoxMesh_wall")
+
+[node name="Player" type="Node3D" parent="."]
+position = Vector3(0, 1.62, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Player"]
+mesh = SubResource("CapsuleMesh_player")
+
+[node name="Head" type="MeshInstance3D" parent="Player"]
+position = Vector3(0, 0.51, 0)
+mesh = SubResource("SphereMesh_player_head")
+
+[node name="EnemyRoot" type="Node3D" parent="."]
+
+[node name="ProjectileRoot" type="Node3D" parent="."]
+
+[node name="ProtoHUD" type="CanvasLayer" parent="."]
+
+[node name="MoveZone" type="Control" parent="ProtoHUD"]
+anchors_preset = 9
+anchor_bottom = 1.0
+anchor_right = 0.5
+grow_vertical = 2
+
+[node name="FireZone" type="Control" parent="ProtoHUD"]
+anchors_preset = 11
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Readout" type="Label" parent="ProtoHUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 18.0
+offset_top = 14.0
+offset_right = -18.0
+offset_bottom = 74.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 22
+text = "PROTOTYPE"
