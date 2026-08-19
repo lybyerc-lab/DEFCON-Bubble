@@ -6,7 +6,7 @@ roughness = 0.96
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_sand"]
 material = SubResource("Material_sand")
-size = Vector2(24, 12)
+size = Vector2(24, 28)
 
 [sub_resource type="StandardMaterial3D" id="Material_water"]
 transparency = 1
@@ -56,6 +56,7 @@ glow_hdr_threshold = 1.1
 [node name="BeachEnvironment" type="Node3D"]
 
 [node name="Sand" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, 8)
 mesh = SubResource("PlaneMesh_sand")
 
 [node name="Water" type="MeshInstance3D" parent="."]
