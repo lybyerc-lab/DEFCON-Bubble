@@ -25,13 +25,79 @@ Two engineering laws were promoted with it. Essential calls stay outside `assert
 
 ## Current bounded milestone
 
-No new gameplay milestone is selected yet.
+`[DB:PRESENTATION:LIT_BEACH]`
 
-Do not infer the next task from the remaining monster roster, from the upgrade seam that now exists, or from previously discussed systems. The next slice must be chosen deliberately from current design intent and must state one bounded player-facing question plus its phone acceptance target before implementation begins.
+### Player-facing question
 
-`FirstUpgradeChoice` proves one authored decision. It is not permission to build a catalog, an economy, a second upgrade tier, or a progression system without a new bounded question.
+Does a lit beach with genuine soap-film bubbles make the already-accepted encounter read as a real beach war on a phone, without changing any gameplay truth?
 
-The approved but not-yet-implemented roster still includes Stiltwalker, Weaver, Mutant, and Bubble King. Their concept roles are not permission to invent mechanics early.
+### Why now
+
+The whole game currently renders as 26 spheres, 9 planes, 6 boxes, and 4 materials. Three specific gaps cost more than the absence of art assets:
+
+- There is no `WorldEnvironment` anywhere and no `default_environment` in `project.godot`. The background renders as void and, with a single `DirectionalLight3D` and no ambient term, every surface the sun misses falls to near-black.
+- The bubble material uses `shading_mode = 0`. The enemies are unshaded, so they cannot catch the sun, show a rim, or read as soap film at all.
+- `docs/concepts/bubble_monster_roster_v1.png` is approved art direction that the primitives only loosely approximate.
+
+This slice closes the first two. It is presentation-only, so it carries no gameplay risk, and it is the cheapest work with a visible payoff.
+
+### Exact proof
+
+One lit scene and one soap-film material, nothing else:
+
+- **`WorldEnvironment` owned by `BeachEnvironment`**
+  - procedural sky whose sun direction and warmth agree with the existing `Sun` `DirectionalLight3D`
+  - ambient light sourced from that sky, so shadowed surfaces read as shadow rather than black
+  - filmic/ACES tonemapping
+  - restrained glow, tuned so bubbles read as luminous without blooming the HUD
+
+- **Soap-film bubble material**
+  - a project-authored `ShaderMaterial` replacing the unshaded `StandardMaterial3D`
+  - fresnel rim brightening toward grazing angles
+  - thin-film iridescence that shifts hue across the surface
+  - shaded, so the bubble responds to the sun and the sky ambient
+  - alpha and silhouette stay close enough that Basic, Fast, and Heavy remain instantly distinguishable
+
+Accepted colour identity is preserved: Fast stays acid-lime and urgent, Big Blub stays large and slow, and the POP droplet choreography is untouched.
+
+### Ownership
+
+- `BeachEnvironment` owns the `WorldEnvironment`, sky, ambient, tonemap, glow, and sun. It owns no gameplay, no schedule, no collision, and no castle state.
+- The soap-film shader and its material are presentation only. They read gameplay state; they never set it.
+- `BasicBubble` and its inherited scenes keep every gameplay value unchanged: health, speed, scale, collision, damage, POP, and despawn.
+- `BubblePopFx` keeps the accepted rupture and droplet behaviour. This slice re-lights it; it does not re-choreograph it.
+- Any quality tier introduced here affects presentation cost only and never an authoritative gameplay outcome.
+
+### Renderer risk
+
+The Web booth runs the Compatibility renderer, which supports less than the Mobile renderer. Glow and shader features can differ or silently degrade there. The booth is an exported release build, so it is the authority for what a reviewer actually sees, and the recent release-build defect is the standing reminder that editor behaviour is not evidence.
+
+Verify the shader and glow in the booth, not only in the editor, and pick settings that degrade acceptably rather than settings that only look correct on desktop Forward+.
+
+### Phone acceptance target
+
+- the sky is visible and no part of the beach reads as a black void
+- bubbles visibly catch the sun, show a rim, and read as soap film rather than flat discs
+- iridescence is present but not garish, and does not turn the family into a rainbow
+- Basic, Fast, and Heavy remain instantly distinguishable at phone size and at speed
+- Fast still reads as the urgent acid-lime threat
+- the accepted POP still reads as a rupture, and droplets remain legible against the brighter scene
+- castle damage and destruction remain legible
+- HUD text, wave/castle messaging, terminal states, and the upgrade overlay stay readable against the brighter background
+- glow does not bloom the HUD or wash out the upgrade buttons
+- frame rate and thermal behaviour remain acceptable through a full three-wave run on the review phone
+- no gameplay value, timing, or outcome changed anywhere
+
+### Non-goals
+
+- no new meshes, models, Meshy assets, textures, or fonts
+- no sand shader, wet-sand shoreline, or animated water; those are a separate later slice
+- no camera framing, shake, or field-of-view work
+- no new enemy archetype, silhouette redesign, or roster art
+- no post-processing beyond tonemapping and modest glow; no SSAO, SSR, depth of field, or volumetrics
+- no re-choreographing the accepted POP, castle destruction, or HUD layout
+- no gameplay tuning, wave rebalance, or upgrade changes
+- no permanent numeric performance budgets before a target-device matrix exists
 
 ## Must not drift into
 
@@ -45,11 +111,13 @@ The approved but not-yet-implemented roster still includes Stiltwalker, Weaver, 
 
 ## Immediate sequence
 
-1. Keep accepted `main` green and recoverable.
-2. Resolve current Game Director intent and live repo state before selecting the next milestone.
-3. Define the next bounded player-facing question, ownership boundaries, non-goals, and phone acceptance gate.
-4. Create a fresh feature branch only after that scope is explicit.
-5. Promote only after automation is green and the relevant player-facing behavior is accepted on a phone.
+1. Implement the `WorldEnvironment` and the soap-film shader on `agent/lit-beach`.
+2. Keep every accepted gameplay fixture green; presentation work must not move a gameplay assertion.
+3. Add a deterministic structure proof that the environment owns a `WorldEnvironment` and that bubbles are no longer unshaded, so the lighting cannot silently regress.
+4. Deploy the exact feature head to the phone review booth with a deliberate `workflow_dispatch` run.
+5. Judge sky, bubble read, family distinguishability, POP legibility, HUD contrast, and sustained frame rate on a phone.
+6. Tune only evidenced defects inside this milestone.
+7. Promote only after explicit Game Director acceptance.
 
 ## Standing laws
 
