@@ -56,7 +56,9 @@ The first upgrade choice was phone-tested and promoted at `56f62eac8370c6b065aab
 
 Two engineering laws were promoted alongside it and are enforced rather than advisory. Godot strips `assert()` from release builds, so an essential call inside an assert runs in CI and vanishes from the exported phone build; `scripts/check_release_safe_asserts.py` fails Godot Verify when that happens (`DB-DEC-011`). The Pages review booth is a single site, so only `main` deploys on push and branch previews are deliberate `workflow_dispatch` runs (`DB-DEC-012`).
 
-The next bounded gameplay milestone is intentionally open. Do not silently select another monster archetype, a second upgrade tier, an upgrade catalog, an economy, repair, additional castle systems, new weapons, or broader wave architecture. Resolve live state and current design intent first, then define one explicit player-facing question and acceptance target before implementation.
+The current bounded milestone is `[DB:PRESENTATION:LIT_BEACH]`: add a `WorldEnvironment` and replace the unshaded bubble material with a project-authored soap-film shader, so the accepted encounter reads as a lit beach on a phone without changing any gameplay truth. It is presentation-only.
+
+Do not let it widen into sand or water shaders, camera work, new meshes or textures, roster art, heavier post-processing, or any gameplay tuning. Those need their own bounded questions. See `docs/ACTIVE_HANDOFF.md` for the exact proof, ownership, renderer risk, and phone acceptance gate.
 
 See `docs/ACTIVE_HANDOFF.md` for current execution state and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
 
