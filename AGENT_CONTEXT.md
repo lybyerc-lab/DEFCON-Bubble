@@ -46,11 +46,17 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, `[DB:WAVE:FIRST_DEFENSE]`, and `[DB:ENCOUNTER:MIXED_THREE_WAVE]` are accepted on `main`.
 
-The mixed three-wave encounter was phone-tested and promoted at `942083789e8d7dc4c61e9aad78757d95eb083451`. It establishes the faceless bubble-monster family through inherited BasicBubble scenes, including Basic/Brute, Fast/Runner, and the five-health `0.55 m/s` Heavy/Big Blub variant; a persistent two-health castle with roof-mounted toothpick origin; authored BASIC TRAINING, FAST BUBBLES, and FINAL PUSH escalation; and a separately composed `BeachEnvironment` that owns presentation only.
+The mixed three-wave encounter was phone-tested and promoted at `942083789e8d7dc4c61e9aad78757d95eb083451`. It establishes Basic/Brute, Fast/Runner, and Heavy/Big Blub; a persistent castle with roof-mounted toothpick origin; authored BASIC TRAINING, FAST BUBBLES, and FINAL PUSH escalation; and a separately composed `BeachEnvironment` that owns presentation only.
 
-The next bounded gameplay milestone is intentionally open. Do not silently select another monster archetype, repair, upgrades, economy, additional castle systems, new weapons, or broader wave architecture. Resolve live state and current design intent first, then define one explicit player-facing question and acceptance target before implementation.
+The current bounded milestone is `[DB:UPGRADE:FIRST_CHOICE]`. The Drive vertical-slice sequence explicitly places one weapon upgrade and one sand-defense upgrade after the three-wave proof; its old desktop-first wording is superseded by the repository's mobile-first law, but the gameplay sequence remains useful.
 
-See `docs/MONSTER_ROSTER.md` for the approved seven-archetype visual source and implementation status.
+After Wave 1 clears, one safe intermission choice is offered for the rest of that run:
+- `upgrade:weapon:skewer`: +1 toothpick damage, producing a two-damage visibly longer Skewer.
+- `upgrade:defense:shell_reinforcement`: +1 maximum and current CastleChunk durability, shown with presentation-only shell bands.
+
+The player gets exactly one of the two. There is no currency, shop, rarity, repair, permanent progression, upgrade tree, or save work in this milestone. The accepted wave schedule, enemy ownership, POP, and damage contracts remain unchanged.
+
+See `docs/ACTIVE_HANDOFF.md` for the exact phone acceptance gate and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
 
 Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
@@ -58,7 +64,7 @@ Resolve live GitHub state before assuming the status of any branch, pull request
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENEMY:FAST_BUBBLE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`, `[DB:UPGRADE:DEFINITION]`, `[DB:UPGRADE:FIRST_CHOICE]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`.
 
 ## Do not
 

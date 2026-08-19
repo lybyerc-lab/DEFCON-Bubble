@@ -19,19 +19,23 @@
 - Weapon owns firing rules.
 - Projectile owns travel and hit request only.
 - Enemy owns its behavior and requests damage.
-- Castle owns castle chunks, localized destruction, and survival evaluation.
-- `CastleChunk` currently proves local `IMPACT` filtering, health, collision shutdown, and destruction truth for one modular chunk; its presentation observer only renders damage.
-- `FirstDefenseWave` currently owns the fixed three-bubble proof's READY/RUNNING/WON/LOST state, spawn timing/count, and terminal evaluation. It is not a generalized wave framework.
-- Each spawned `BasicBubble` still owns movement, its one castle-impact request, pop state, and despawn. `FirstDefenseWave` may stop surviving advance after terminal castle loss but does not declare those enemies dead.
-- The first-defense HUD observes wave and castle signals; it owns no spawn, health, damage, or terminal outcome.
+- Castle owns castle chunks, localized destruction, durability changes, and survival evaluation.
+- `CastleChunk` owns local `IMPACT` filtering, health, additive durability, collision shutdown, and destruction truth. Its presentation observer renders sand damage and optional shell reinforcement only.
+- `FirstDefenseWave` owns only the frozen fixed three-bubble proof's READY/RUNNING/WON/LOST state, spawn timing/count, and terminal evaluation.
+- Each spawned `BasicBubble` owns movement, its one castle-impact request, pop state, and despawn.
 - `EncounterSpawnPlan` and `EncounterWavePlan` hold only the authored kind/time sequence and wave identity/title for the current mixed encounter. They are not a registry, procedural grammar, or rule engine.
-- `MixedEncounter` owns the fixed three-wave order, per-wave clock, 2.25-second intermissions, stable wave/slot IDs, and READY/WAVE_ACTIVE/INTERMISSION/WON/LOST outcome. It does not own enemy damage/death or castle health.
-- Fast Bubble instantiates inherited `BasicBubble` gameplay at 2.25 m/s with the same one-health, one-IMPACT, POP, collision, and despawn contracts. Its acid-lime pulse component is presentation only.
-- Heavy Bubble/Big Blub instantiates inherited `BasicBubble` gameplay at five health and `0.55 m/s`; its 1.7 scale, wide body, film color, and slow gait are presentation/configuration, not parallel death logic.
+- `MixedEncounter` owns the fixed three-wave order, per-wave clock, stable wave/slot IDs, and READY/WAVE_ACTIVE/INTERMISSION/WON/LOST outcome. A narrow hold/release seam may pause its existing intermission clock for a safe player choice; the encounter still owns wave progression after release.
+- Fast Bubble instantiates inherited `BasicBubble` gameplay at 2.25 m/s with the same one-health, one-IMPACT, POP, collision, and despawn contracts. Its acid-lime pulse is presentation only.
+- Heavy Bubble/Big Blub instantiates inherited `BasicBubble` gameplay at five health and `0.55 m/s`; its size, film color, and gait are presentation/configuration, not parallel death logic.
 - `BubbleCreatureFx` poses the shared faceless bubble-appendage rig and hides it when BasicBubble emits `popped`. It does not translate the enemy or own collision, damage, death, or despawn.
-- The mixed-range `ProjectileOrigin` is a child of `CastleChunk`, so its roof-relative launch point follows authored castle placement. Range glue still only translates FIRE intent into ToothpickProjectile creation.
-- The same `CastleChunk` instance persists through all three mixed waves; no encounter transition heals or recreates it.
-- The mixed-encounter HUD observes encounter and castle signals. FIRE/RESET/RETRY controls request intent and never set encounter or castle truth.
+- The mixed-range `ProjectileOrigin` is a child of `CastleChunk`, so its roof-relative launch point follows authored castle placement.
+- The same `CastleChunk` instance persists through all three mixed waves; encounter transitions do not heal or recreate it.
+- `UpgradeDefinition` is a data-only stable-ID resource containing the tiny tunable values needed by one offered upgrade.
+- `FirstUpgradeChoice` owns `[DB:UPGRADE:FIRST_CHOICE]`: exactly one run-scoped selection after Wave 1, the selected stable ID, and the narrow effect application. It does not own hits, POP, castle damage, destruction, wave outcome, or UI state.
+- SKEWER adds one configured damage to newly spawned `ToothpickProjectile` instances and lengthens their presentation/collision silhouette before they enter the tree. The projectile still creates the typed PIERCE request.
+- SHELL REINFORCEMENT requests one additive durability change through `CastleChunk.add_durability()`. CastleChunk remains authority for the resulting current/max durability and later destruction.
+- The first-upgrade HUD renders the two definitions and forwards only stable upgrade IDs. It never applies effects itself.
+- The mixed-encounter HUD observes encounter and castle signals. FIRE/RESET/RETRY controls request intent and never set encounter, castle, or upgrade truth.
 - `BeachEnvironment` owns only reusable sand, water, shoreline, and sunlight presentation. `BeachArena` composes it beside `MixedEncounterRange` and the camera.
 - HUD renders and requests choices; it never becomes gameplay truth.
 - Platform lifecycle adapters will own focus/background/resume and system-interruption translation without owning run rules.

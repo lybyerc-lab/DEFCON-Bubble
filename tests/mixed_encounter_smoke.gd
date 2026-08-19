@@ -2,8 +2,11 @@ extends SceneTree
 
 # [DB:TEST:MIXED_ENCOUNTER]
 # Deterministic positive and negative fixtures for the authored three-wave run.
+# The new Wave-1 upgrade gate is released with a deterministic Skewer choice so
+# this frozen regression still measures the accepted encounter/castle contracts.
 
 const ENCOUNTER_SCENE: PackedScene = preload("res://scenes/proof/mixed_encounter_range.tscn")
+const REGRESSION_UPGRADE_ID: StringName = &"upgrade:weapon:skewer"
 
 var failures: Array[String] = []
 var state_events: Array[int] = []
@@ -80,6 +83,7 @@ func _prove_three_wave_victory_with_persistent_damage() -> void:
 	_check(encounter.current_state() == MixedEncounter.EncounterState.INTERMISSION, "wave 1 clear must enter INTERMISSION, not victory")
 	_check(status_label.text == "BASIC TRAINING CLEAR!  NEXT: FAST BUBBLES", "intermission HUD must announce clear and warn about the next wave")
 	_check(fire_button.disabled and reset_button.text == "RESET", "FIRE must disable during intermission without offering terminal retry")
+	_release_upgrade_gate_for_regression(range_root, encounter)
 	var intermission_left: float = encounter.seconds_until_next_event()
 	encounter._physics_process(intermission_left - 0.001)
 	_check(encounter.current_wave_number() == 1, "next wave must not begin before 2.25 seconds")
@@ -157,6 +161,7 @@ func _prove_cross_wave_defeat_stops_future_threats() -> void:
 	_pierce(encounter.bubble_at(1))
 	_spawn_next(encounter)
 	_pierce(encounter.bubble_at(2))
+	_release_upgrade_gate_for_regression(range_root, encounter)
 	encounter._physics_process(encounter.seconds_until_next_event() + 0.001)
 
 	_check(encounter.current_wave_number() == 2 and encounter.all_spawned_count() == 4, "loss fixture must reach wave 2 Fast Bubble")
@@ -201,6 +206,17 @@ func _prove_cross_wave_defeat_stops_future_threats() -> void:
 
 	range_root.queue_free()
 	await process_frame
+
+
+func _release_upgrade_gate_for_regression(range_root: Node3D, encounter: MixedEncounter) -> void:
+	var choice: FirstUpgradeChoice = range_root.get_node("FirstUpgradeChoice") as FirstUpgradeChoice
+	_check(choice != null, "accepted mixed encounter regression requires the new upgrade authority")
+	if choice == null:
+		return
+	_check(choice.is_choice_pending(), "Wave 1 clear must expose the bounded upgrade gate")
+	_check(encounter.is_intermission_held(), "upgrade gate must hold the Wave-1 intermission")
+	_check(choice.choose_upgrade(REGRESSION_UPGRADE_ID), "regression must deterministically select Skewer")
+	_check(not encounter.is_intermission_held(), "selected upgrade must release the accepted intermission clock")
 
 
 func _authored_schedule_is_exact(encounter: MixedEncounter) -> bool:

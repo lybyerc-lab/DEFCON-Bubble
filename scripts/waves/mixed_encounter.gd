@@ -40,6 +40,7 @@ var _state: EncounterState = EncounterState.READY
 var _wave_index: int = -1
 var _wave_elapsed_seconds: float = 0.0
 var _intermission_elapsed_seconds: float = 0.0
+var _intermission_held: bool = false
 var _next_spawn_index: int = 0
 var _current_spawned_count: int = 0
 var _current_resolved_ids: Dictionary = {}
@@ -61,6 +62,8 @@ func _physics_process(delta: float) -> void:
 		_wave_elapsed_seconds += delta
 		_spawn_due_bubbles()
 	elif _state == EncounterState.INTERMISSION:
+		if _intermission_held:
+			return
 		_intermission_elapsed_seconds += delta
 		if _intermission_elapsed_seconds >= INTERMISSION_SECONDS:
 			# Deliberately discard excess time. Every wave begins from its authored zero.
@@ -129,11 +132,33 @@ func seconds_until_next_event() -> float:
 	return maxf(0.0, plan.spawns[_next_spawn_index].spawn_at_seconds - _wave_elapsed_seconds)
 
 
+func hold_intermission() -> bool:
+	# [DB:UPGRADE:INTERMISSION_GATE]
+	# A safe choice may pause the already-authored intermission clock. The
+	# encounter still owns when the next wave begins after the gate is released.
+	if _state != EncounterState.INTERMISSION:
+		return false
+	_intermission_held = true
+	return true
+
+
+func release_intermission() -> bool:
+	if _state != EncounterState.INTERMISSION or not _intermission_held:
+		return false
+	_intermission_held = false
+	return true
+
+
+func is_intermission_held() -> bool:
+	return _intermission_held
+
+
 func _enter_wave(next_wave_index: int) -> void:
 	assert(next_wave_index >= 0 and next_wave_index < waves.size())
 	_wave_index = next_wave_index
 	_wave_elapsed_seconds = 0.0
 	_intermission_elapsed_seconds = 0.0
+	_intermission_held = false
 	_next_spawn_index = 0
 	_current_spawned_count = 0
 	_current_resolved_ids.clear()
