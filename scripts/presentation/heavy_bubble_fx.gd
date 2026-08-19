@@ -28,3 +28,4 @@ func _apply_heavy_film() -> void:
 	assert(film_material != null, "[DB:PRESENTATION:HEAVY_BUBBLE] Soap-film material is required.")
 	film_material.set_shader_parameter("base_color", HEAVY_FILM_COLOR)
 	film_material.set_shader_parameter("iridescence_intensity", 0.46)
+	creature_fx.set_film_tint(HEAVY_FILM_COLOR, 0.46)

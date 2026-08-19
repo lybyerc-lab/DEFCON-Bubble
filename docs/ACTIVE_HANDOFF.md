@@ -36,8 +36,10 @@ Does a lit beach with genuine soap-film bubbles make the already-accepted encoun
 The whole game currently renders as 26 spheres, 9 planes, 6 boxes, and 4 materials. Three specific gaps cost more than the absence of art assets:
 
 - There is no `WorldEnvironment` anywhere and no `default_environment` in `project.godot`. The background renders as void and, with a single `DirectionalLight3D` and no ambient term, every surface the sun misses falls to near-black.
-- The bubble material uses `shading_mode = 0`. The enemies are unshaded, so they cannot catch the sun, show a rim, or read as soap film at all.
+- The 14 appendage meshes on every creature use a `StandardMaterial3D` with `shading_mode = 0`, so limbs are flat and unshaded while the body is a lit soap film. A creature reads as two substances.
 - `docs/concepts/bubble_monster_roster_v1.png` is approved art direction that the primitives only loosely approximate.
+
+An earlier reading of this scope claimed the bubbles themselves were unshaded. That was wrong. `BubblePopFx` already builds a lit soap-film `ShaderMaterial` for the body with fresnel, a thin-film spectrum, and animated thickness, and Fast and Heavy already tune it. The correction makes the environment work more important rather than less: that shader sets `SPECULAR = 0.72` and low `ROUGHNESS` and drives colour off fresnel, so with no sky and no ambient term it has almost nothing to reflect. The film is starved, not missing.
 
 This slice closes the first two. It is presentation-only, so it carries no gameplay risk, and it is the cheapest work with a visible payoff.
 
@@ -51,11 +53,11 @@ One lit scene and one soap-film material, nothing else:
   - filmic/ACES tonemapping
   - restrained glow, tuned so bubbles read as luminous without blooming the HUD
 
-- **Soap-film bubble material**
-  - a project-authored `ShaderMaterial` replacing the unshaded `StandardMaterial3D`
-  - fresnel rim brightening toward grazing angles
-  - thin-film iridescence that shifts hue across the surface
-  - shaded, so the bubble responds to the sun and the sky ambient
+- **One soap-film substance per creature**
+  - the existing body shader is extracted to `shaders/soap_film.gdshader` so body and limbs share one source of truth
+  - `BubbleCreatureFx` owns a limb material built from that shader and drops the unshaded `StandardMaterial3D`
+  - limbs carry their own fixed alpha, so a translucent variant tint can never dissolve the bipedal silhouette
+  - variants tint limbs through `set_film_tint`, taking hue only
   - alpha and silhouette stay close enough that Basic, Fast, and Heavy remain instantly distinguishable
 
 Accepted colour identity is preserved: Fast stays acid-lime and urgent, Big Blub stays large and slow, and the POP droplet choreography is untouched.

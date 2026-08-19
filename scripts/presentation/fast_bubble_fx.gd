@@ -14,6 +14,7 @@ const ACID_LIME := Color(0.54, 1.0, 0.08, 0.16)
 @onready var bubble: BasicBubble = get_parent() as BasicBubble
 @onready var visual: Node3D = get_node("../Visual") as Node3D
 @onready var bubble_mesh: MeshInstance3D = get_node("../Visual/BubbleMesh") as MeshInstance3D
+@onready var creature_fx: BubbleCreatureFx = get_node("../BubbleCreatureFx") as BubbleCreatureFx
 
 var _elapsed_seconds: float = 0.0
 
@@ -22,6 +23,7 @@ func _ready() -> void:
 	assert(bubble != null, "[DB:PRESENTATION:FAST_BUBBLE] BasicBubble parent is required.")
 	assert(visual != null, "[DB:PRESENTATION:FAST_BUBBLE] Visual is required.")
 	assert(bubble_mesh != null, "[DB:PRESENTATION:FAST_BUBBLE] BubbleMesh is required.")
+	assert(creature_fx != null, "[DB:PRESENTATION:FAST_BUBBLE] BubbleCreatureFx is required.")
 	bubble.popped.connect(_on_bubble_popped)
 	call_deferred("_apply_acid_lime_cue")
 	reset_pulse_phase()
@@ -51,6 +53,7 @@ func _apply_acid_lime_cue() -> void:
 	assert(film_material != null, "[DB:PRESENTATION:FAST_BUBBLE] Soap-film material is required.")
 	film_material.set_shader_parameter("base_color", ACID_LIME)
 	film_material.set_shader_parameter("iridescence_intensity", 0.22)
+	creature_fx.set_film_tint(ACID_LIME, 0.22)
 
 
 func _on_bubble_popped(_bubble_id: StringName) -> void:
