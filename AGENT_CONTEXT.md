@@ -56,9 +56,11 @@ The first upgrade choice was phone-tested and promoted at `56f62eac8370c6b065aab
 
 Two engineering laws were promoted alongside it and are enforced rather than advisory. Godot strips `assert()` from release builds, so an essential call inside an assert runs in CI and vanishes from the exported phone build; `scripts/check_release_safe_asserts.py` fails Godot Verify when that happens (`DB-DEC-011`). The Pages review booth is a single site, so only `main` deploys on push and branch previews are deliberate `workflow_dispatch` runs (`DB-DEC-012`).
 
-The current bounded milestone is `[DB:PRESENTATION:LIT_BEACH]`: add a `WorldEnvironment` and replace the unshaded bubble material with a project-authored soap-film shader, so the accepted encounter reads as a lit beach on a phone without changing any gameplay truth. It is presentation-only.
+The lit beach was phone-tested and promoted at `27f0e660f1bcf6341ca0b672b20c5e4de840df16`. `BeachEnvironment` owns a `WorldEnvironment` with a procedural sky, sky-sourced ambient, ACES tonemapping, and restrained glow, and `shaders/soap_film.gdshader` is the single source of truth for the bubble family's surface, shared by the body and every limb.
 
-Do not let it widen into sand or water shaders, camera work, new meshes or textures, roster art, heavier post-processing, or any gameplay tuning. Those need their own bounded questions. See `docs/ACTIVE_HANDOFF.md` for the exact proof, ownership, renderer risk, and phone acceptance gate.
+The current bounded milestone is `[DB:CAMERA:ORIENTATION_FRAMING]`: make the battlefield frame deliberately on a phone in both orientations. `Camera3D` in the arena sets no `keep_aspect`, so Godot's `KEEP_HEIGHT` default locks vertical FOV and expands horizontal with the display aspect; on a phone in landscape the 24-by-12 playable surface reads as a shallow strip with dead space beside it. Framing is presentation and must never move spawn positions, castle placement, travel distances, or wave timing.
+
+Do not let it widen into sand or water shaders, camera shake or cinematic moves, new geometry, lighting or material changes, HUD redesign, or gameplay rebalance. Sand and water are the slice after this one, judged inside whatever framing this milestone establishes.
 
 See `docs/ACTIVE_HANDOFF.md` for current execution state and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
 
