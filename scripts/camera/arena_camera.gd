@@ -19,10 +19,12 @@ extends Camera3D
 # any gameplay distance; it only decides where the camera stands to see them.
 
 # The lane this camera must always contain, in world metres. These mirror the
-# authored castle and spawn positions plus readable margin. If the encounter ever
+# authored castle and spawn positions plus readable margin. The margin is
+# generous on purpose: framing the lane tightly reads as crowded on a phone, so
+# the lane is sized to occupy roughly 58% of the width rather than filling it. If the encounter ever
 # moves them, these change deliberately and the proof fails until they agree.
 const LANE_CENTER := Vector3(0.8, 1.0, 0.0)
-const FRAMED_HALF_WIDTH_METERS: float = 6.6
+const FRAMED_HALF_WIDTH_METERS: float = 9.0
 const FRAMED_HALF_HEIGHT_METERS: float = 3.0
 
 # Landscape keeps a narrow, undistorted read. Portrait has to open up: reaching
@@ -38,9 +40,11 @@ const PORTRAIT_PITCH_DEGREES: float = -34.0
 const LANDSCAPE_ASPECT: float = 16.0 / 9.0
 const PORTRAIT_ASPECT: float = 9.0 / 16.0
 
-# A hard stop on retreat. Without it an extreme portrait aspect walks the camera
-# off the authored beach to satisfy the width term.
-const MAX_FRAMING_DISTANCE_METERS: float = 22.0
+# A hard stop on retreat, so an extreme aspect cannot walk the camera off the
+# authored beach to satisfy the width term. It is set beyond what any tested
+# aspect needs: if it ever binds, the frame is being decided by a safety limit
+# instead of by the framing solve, which the proof treats as a failure.
+const MAX_FRAMING_DISTANCE_METERS: float = 30.0
 
 
 func _ready() -> void:
