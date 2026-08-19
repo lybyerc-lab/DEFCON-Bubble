@@ -44,9 +44,13 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 ## Current development edge
 
-Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, and `[DB:WAVE:FIRST_DEFENSE]` are accepted on `main`. Those proofs establish the toothpick hit path, target-owned pop/despawn, one modular castle chunk with local health/destruction, a fixed three-bubble defense, presentation-owned feedback, and a phone-accessible Web review path through the shared damage contract.
+Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, `[DB:WAVE:FIRST_DEFENSE]`, and `[DB:ENCOUNTER:MIXED_THREE_WAVE]` are accepted on `main`.
 
-The current bounded milestone is `[DB:ENCOUNTER:MIXED_THREE_WAVE]`: realize the approved faceless bubble-monster family through inherited BasicBubble scenes, including Basic, Fast, and the five-health `0.55 m/s` Heavy/Big Blub variant. FINAL PUSH begins with Big Blub. The mixed range places the persistent castle at x=-4.4 and parents the toothpick origin to its roof. `BeachEnvironment` separately owns sand, water, shoreline, and light presentation; it owns no gameplay collision or encounter truth. See `docs/MONSTER_ROSTER.md` for the seven-archetype visual source and implementation status.
+The mixed three-wave encounter was phone-tested and promoted at `942083789e8d7dc4c61e9aad78757d95eb083451`. It establishes the faceless bubble-monster family through inherited BasicBubble scenes, including Basic/Brute, Fast/Runner, and the five-health `0.55 m/s` Heavy/Big Blub variant; a persistent two-health castle with roof-mounted toothpick origin; authored BASIC TRAINING, FAST BUBBLES, and FINAL PUSH escalation; and a separately composed `BeachEnvironment` that owns presentation only.
+
+The next bounded gameplay milestone is intentionally open. Do not silently select another monster archetype, repair, upgrades, economy, additional castle systems, new weapons, or broader wave architecture. Resolve live state and current design intent first, then define one explicit player-facing question and acceptance target before implementation.
+
+See `docs/MONSTER_ROSTER.md` for the approved seven-archetype visual source and implementation status.
 
 Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
