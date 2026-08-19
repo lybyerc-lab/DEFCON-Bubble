@@ -14,6 +14,7 @@ Accepted on `main`:
 - `[DB:WAVE:FIRST_DEFENSE]` at `306f7a8c94fe55e17b7dd29850f9f327211ccb9c`
 - `[DB:ENCOUNTER:MIXED_THREE_WAVE]` at `942083789e8d7dc4c61e9aad78757d95eb083451`
 - `[DB:UPGRADE:FIRST_CHOICE]` at `56f62eac8370c6b065aab5926d3716a81ce3418f`
+- `[DB:PRESENTATION:LIT_BEACH]` at `27f0e660f1bcf6341ca0b672b20c5e4de840df16`
 
 The shared damage boundary remains `DamageRequest` -> `DamageReceiver` -> target-owned outcome. Native mobile is the product target, desktop is development/automation, and Web Compatibility is the rapid phone review surface.
 
@@ -21,85 +22,66 @@ The phone-accepted mixed encounter establishes Basic/Brute, Fast/Runner, Heavy/B
 
 The phone-accepted first upgrade choice establishes one run-scoped between-wave decision. `UpgradeDefinition` is data with stable IDs; `FirstUpgradeChoice` owns the single decision and applies its narrow effect; `MixedEncounter` exposes only a hold/release seam and still owns wave progression; the HUD forwards stable IDs and owns no effect. SKEWER takes toothpicks from 1 to 2 damage with a longer silhouette; SHELL REINFORCEMENT takes the castle from 2/2 to 3/3 without erasing damage history.
 
+The phone-accepted lit beach establishes scene lighting and one soap-film substance. `BeachEnvironment` owns a `WorldEnvironment` with a procedural sky, sky-sourced ambient, ACES tonemapping, and restrained screen-blend glow. `shaders/soap_film.gdshader` is the single source of truth for the family's surface, used by the body through `BubblePopFx` and by every limb through `BubbleCreatureFx`. Limbs hold their own fixed alpha so a translucent variant tint cannot dissolve the bipedal silhouette.
+
 Two engineering laws were promoted with it. Essential calls stay outside `assert()`, enforced in Godot Verify by `scripts/check_release_safe_asserts.py`, because Godot strips asserts from release builds and CI runs a debug binary. Only `main` deploys to the Pages review booth on push; feature branches are previewed through a deliberate `workflow_dispatch` run.
 
 ## Current bounded milestone
 
-`[DB:PRESENTATION:LIT_BEACH]`
+`[DB:CAMERA:ORIENTATION_FRAMING]`
 
 ### Player-facing question
 
-Does a lit beach with genuine soap-film bubbles make the already-accepted encounter read as a real beach war on a phone, without changing any gameplay truth?
+Does the battlefield frame correctly on a real phone in both orientations, so the playable surface reads as a beach the player is defending rather than a shallow strip with dead space beside it?
 
 ### Why now
 
-The whole game currently renders as 26 spheres, 9 planes, 6 boxes, and 4 materials. Three specific gaps cost more than the absence of art assets:
+The Game Director found this on a phone while accepting `[DB:PRESENTATION:LIT_BEACH]`. It is a pre-existing defect that lighting made visible: previously the void background hid where the beach ended.
 
-- There is no `WorldEnvironment` anywhere and no `default_environment` in `project.godot`. The background renders as void and, with a single `DirectionalLight3D` and no ambient term, every surface the sun misses falls to near-black.
-- The 14 appendage meshes on every creature use a `StandardMaterial3D` with `shading_mode = 0`, so limbs are flat and unshaded while the body is a lit soap film. A creature reads as two substances.
-- `docs/concepts/bubble_monster_roster_v1.png` is approved art direction that the primitives only loosely approximate.
+`Camera3D` in `scenes/arena/beach_arena.tscn` sets no `keep_aspect`, so it takes Godot's default `KEEP_HEIGHT`. Vertical FOV is locked at 75 degrees and horizontal expands with the display aspect. Authored against the 1280x720 window and viewed on a roughly 20:9 phone in landscape, that yields about 25 percent more width and no additional depth. The sand is 24 by 12, so the playable surface reads as a shallow strip with dead space either side.
 
-An earlier reading of this scope claimed the bubbles themselves were unshaded. That was wrong. `BubblePopFx` already builds a lit soap-film `ShaderMaterial` for the body with fresnel, a thin-film spectrum, and animated thickness, and Fast and Heavy already tune it. The correction makes the environment work more important rather than less: that shader sets `SPECULAR = 0.72` and low `ROUGHNESS` and drives colour off fresnel, so with no sky and no ambient term it has almost nothing to reflect. The film is starved, not missing.
-
-This slice closes the first two. It is presentation-only, so it carries no gameplay risk, and it is the cheapest work with a visible payoff.
+This is a mobile-first framing defect on the primary product target, so it outranks surface fidelity. Sand and water are the slice after this one and will be judged inside whatever framing this milestone establishes.
 
 ### Exact proof
 
-One lit scene and one soap-film material, nothing else:
+The battlefield frames deliberately rather than by engine default:
 
-- **`WorldEnvironment` owned by `BeachEnvironment`**
-  - procedural sky whose sun direction and warmth agree with the existing `Sun` `DirectionalLight3D`
-  - ambient light sourced from that sky, so shadowed surfaces read as shadow rather than black
-  - filmic/ACES tonemapping
-  - restrained glow, tuned so bubbles read as luminous without blooming the HUD
+- an explicit framing decision for the arena camera rather than an inherited `keep_aspect` default
+- the playable surface fills a defined, intentional share of the screen in both portrait and landscape on phone aspect ratios
+- the castle, the spawn edge, and the full left-to-right combat lane are all visible at once in both orientations
+- no gameplay-relevant space sits outside the frame, and no large dead margin sits inside it
+- framing derives from named values rather than magic coordinates, so it can be retuned without hunting through the scene
 
-- **One soap-film substance per creature**
-  - the existing body shader is extracted to `shaders/soap_film.gdshader` so body and limbs share one source of truth
-  - `BubbleCreatureFx` owns a limb material built from that shader and drops the unshaded `StandardMaterial3D`
-  - limbs carry their own fixed alpha, so a translucent variant tint can never dissolve the bipedal silhouette
-  - variants tint limbs through `set_film_tint`, taking hue only
-  - alpha and silhouette stay close enough that Basic, Fast, and Heavy remain instantly distinguishable
-
-Accepted colour identity is preserved: Fast stays acid-lime and urgent, Big Blub stays large and slow, and the POP droplet choreography is untouched.
+Whether this is solved by `keep_aspect`, FOV, camera placement, arena proportions, or an orientation-aware combination is an implementation decision for the milestone, made from what actually reads on a phone.
 
 ### Ownership
 
-- `BeachEnvironment` owns the `WorldEnvironment`, sky, ambient, tonemap, glow, and sun. It owns no gameplay, no schedule, no collision, and no castle state.
-- The soap-film shader and its material are presentation only. They read gameplay state; they never set it.
-- `BasicBubble` and its inherited scenes keep every gameplay value unchanged: health, speed, scale, collision, damage, POP, and despawn.
-- `BubblePopFx` keeps the accepted rupture and droplet behaviour. This slice re-lights it; it does not re-choreograph it.
-- Any quality tier introduced here affects presentation cost only and never an authoritative gameplay outcome.
-
-### Renderer risk
-
-The Web booth runs the Compatibility renderer, which supports less than the Mobile renderer. Glow and shader features can differ or silently degrade there. The booth is an exported release build, so it is the authority for what a reviewer actually sees, and the recent release-build defect is the standing reminder that editor behaviour is not evidence.
-
-Verify the shader and glow in the booth, not only in the editor, and pick settings that degrade acceptably rather than settings that only look correct on desktop Forward+.
+- The arena scene owns battlefield framing. Framing is presentation and never changes spawn positions, castle placement, travel distances, or wave timing.
+- `MixedEncounter` keeps wave progression. `CastleChunk` keeps castle truth. Enemies keep movement and collision.
+- If arena proportions change, gameplay distances that depend on them must be preserved deliberately and proven, not adjusted to suit the camera.
+- Touch controls keep requesting intent only. Reframing must not move combat authority into the camera or the HUD.
 
 ### Phone acceptance target
 
-- the sky is visible and no part of the beach reads as a black void
-- bubbles visibly catch the sun, show a rim, and read as soap film rather than flat discs
-- iridescence is present but not garish, and does not turn the family into a rainbow
-- Basic, Fast, and Heavy remain instantly distinguishable at phone size and at speed
-- Fast still reads as the urgent acid-lime threat
-- the accepted POP still reads as a rupture, and droplets remain legible against the brighter scene
-- castle damage and destruction remain legible
-- HUD text, wave/castle messaging, terminal states, and the upgrade overlay stay readable against the brighter background
-- glow does not bloom the HUD or wash out the upgrade buttons
-- frame rate and thermal behaviour remain acceptable through a full three-wave run on the review phone
-- no gameplay value, timing, or outcome changed anywhere
+- portrait and landscape both frame the battlefield deliberately, with no shallow-strip read and no large dead margin
+- castle, spawn edge, and the full combat lane are visible together in both orientations
+- enemy approach still reads as pressure, and Fast still reads as urgent at the new framing
+- Big Blub still reads as large relative to the frame
+- HUD, wave and castle messaging, terminal states, and the upgrade overlay stay readable and stay clear of the action
+- touch targets remain comfortable and do not overlap the battlefield read
+- rotating the device mid-run recovers to a correct frame without breaking the encounter
+- the accepted three-wave encounter, POP, castle consequence, upgrade choice, win/loss, and RETRY are all unchanged
+- no gameplay value, distance, or timing changed
 
 ### Non-goals
 
-- no new meshes, models, Meshy assets, textures, or fonts
-- no sand shader, wet-sand shoreline, or animated water; those are a separate later slice
-- no camera framing, shake, or field-of-view work
-- no new enemy archetype, silhouette redesign, or roster art
-- no post-processing beyond tonemapping and modest glow; no SSAO, SSR, depth of field, or volumetrics
-- no re-choreographing the accepted POP, castle destruction, or HUD layout
-- no gameplay tuning, wave rebalance, or upgrade changes
-- no permanent numeric performance budgets before a target-device matrix exists
+- no sand shader, wet-sand shoreline, or animated water; that is the next slice and is judged inside this framing
+- no camera shake, push-in, dynamic tracking, or cinematic moves; this slice is static framing correctness
+- no new geometry, meshes, textures, or roster art
+- no lighting, glow, or material changes; `[DB:PRESENTATION:LIT_BEACH]` is accepted
+- no HUD redesign beyond what framing correctness requires
+- no wave, enemy, castle, or upgrade rebalance
+- no new input scheme or control layout
 
 ## Must not drift into
 
@@ -113,11 +95,11 @@ Verify the shader and glow in the booth, not only in the editor, and pick settin
 
 ## Immediate sequence
 
-1. Implement the `WorldEnvironment` and the soap-film shader on `agent/lit-beach`.
-2. Keep every accepted gameplay fixture green; presentation work must not move a gameplay assertion.
-3. Add a deterministic structure proof that the environment owns a `WorldEnvironment` and that bubbles are no longer unshaded, so the lighting cannot silently regress.
+1. Establish deliberate arena framing on `agent/camera-framing`.
+2. Keep every accepted gameplay fixture green; framing must not move a gameplay assertion.
+3. Add a deterministic proof that framing is explicit rather than inherited from an engine default, and that gameplay distances are unchanged.
 4. Deploy the exact feature head to the phone review booth with a deliberate `workflow_dispatch` run.
-5. Judge sky, bubble read, family distinguishability, POP legibility, HUD contrast, and sustained frame rate on a phone.
+5. Judge both orientations, mid-run rotation, enemy pressure, HUD clearance, and touch comfort on a phone.
 6. Tune only evidenced defects inside this milestone.
 7. Promote only after explicit Game Director acceptance.
 
