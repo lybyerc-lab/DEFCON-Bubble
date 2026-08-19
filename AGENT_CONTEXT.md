@@ -44,19 +44,21 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 
 ## Current development edge
 
-Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, `[DB:WAVE:FIRST_DEFENSE]`, and `[DB:ENCOUNTER:MIXED_THREE_WAVE]` are accepted on `main`.
+Foundation 0, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:IMPACT]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`, and `[DB:UPGRADE:FIRST_CHOICE]` are accepted on `main`.
 
 The mixed three-wave encounter was phone-tested and promoted at `942083789e8d7dc4c61e9aad78757d95eb083451`. It establishes Basic/Brute, Fast/Runner, and Heavy/Big Blub; a persistent castle with roof-mounted toothpick origin; authored BASIC TRAINING, FAST BUBBLES, and FINAL PUSH escalation; and a separately composed `BeachEnvironment` that owns presentation only.
 
-The current bounded milestone is `[DB:UPGRADE:FIRST_CHOICE]`. The Drive vertical-slice sequence explicitly places one weapon upgrade and one sand-defense upgrade after the three-wave proof; its old desktop-first wording is superseded by the repository's mobile-first law, but the gameplay sequence remains useful.
-
-After Wave 1 clears, one safe intermission choice is offered for the rest of that run:
+The first upgrade choice was phone-tested and promoted at `56f62eac8370c6b065aab5926d3716a81ce3418f`. After Wave 1 clears, the encounter holds its intermission until the player takes exactly one run-scoped upgrade:
 - `upgrade:weapon:skewer`: +1 toothpick damage, producing a two-damage visibly longer Skewer.
 - `upgrade:defense:shell_reinforcement`: +1 maximum and current CastleChunk durability, shown with presentation-only shell bands.
 
-The player gets exactly one of the two. There is no currency, shop, rarity, repair, permanent progression, upgrade tree, or save work in this milestone. The accepted wave schedule, enemy ownership, POP, and damage contracts remain unchanged.
+`UpgradeDefinition` is data with stable IDs. `FirstUpgradeChoice` owns the one decision and applies its narrow effect. `MixedEncounter` exposes only a hold/release seam and still owns wave progression. The HUD forwards stable IDs and owns no gameplay effect. There is no currency, shop, rarity, repair, permanent progression, upgrade tree, or save work, and the accepted wave schedule, enemy ownership, POP, and damage contracts are unchanged.
 
-See `docs/ACTIVE_HANDOFF.md` for the exact phone acceptance gate and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
+Two engineering laws were promoted alongside it and are enforced rather than advisory. Godot strips `assert()` from release builds, so an essential call inside an assert runs in CI and vanishes from the exported phone build; `scripts/check_release_safe_asserts.py` fails Godot Verify when that happens (`DB-DEC-011`). The Pages review booth is a single site, so only `main` deploys on push and branch previews are deliberate `workflow_dispatch` runs (`DB-DEC-012`).
+
+The next bounded gameplay milestone is intentionally open. Do not silently select another monster archetype, a second upgrade tier, an upgrade catalog, an economy, repair, additional castle systems, new weapons, or broader wave architecture. Resolve live state and current design intent first, then define one explicit player-facing question and acceptance target before implementation.
+
+See `docs/ACTIVE_HANDOFF.md` for current execution state and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
 
 Resolve live GitHub state before assuming the status of any branch, pull request, workflow, or preview. Current execution detail belongs in `docs/ACTIVE_HANDOFF.md`. Current Game Director intent and cautions belong in `docs/DIRECTORS_NOTES.md`.
 
