@@ -28,80 +28,91 @@ Two engineering laws were promoted with it. Essential calls stay outside `assert
 
 ## Current bounded milestone
 
-`[DB:CAMERA:ORIENTATION_FRAMING]`
+`[DB:PLAYER:WALL_DEFENDER]`
 
 ### Player-facing question
 
-Does the battlefield frame correctly on a real phone in both orientations, so the playable surface reads as a beach the player is defending rather than a shallow strip with dead space beside it?
+Does giving the defender a body that patrols the wall make deciding **where to stand** the heart of a wave, without cluttering the phone controls?
 
 ### Why now
 
-The Game Director found this on a phone while accepting `[DB:PRESENTATION:LIT_BEACH]`. It is a pre-existing defect that lighting made visible: previously the void background hid where the beach ended.
+The game has never had a player. Firing came from a marker bolted to the castle roof, so the only decision in a run was when to press FIRE, plus one upgrade choice. That is why every candidate for "the next milestone" kept sounding like another monster: there was no loop to deepen.
 
-`Camera3D` in `scenes/arena/beach_arena.tscn` sets no `keep_aspect`, so it takes Godot's default `KEEP_HEIGHT`. Vertical FOV is locked at 75 degrees and horizontal expands with the display aspect. Authored against the 1280x720 window and viewed on a roughly 20:9 phone in landscape, that yields about 25 percent more width and no additional depth. The sand is 24 by 12, so the playable surface reads as a shallow strip with dead space either side.
+A throwaway prototype on `agent/iso-wall-prototype` was built and phone-tested before this scope was written. It established three things:
 
-This is a mobile-first framing defect on the primary product target, so it outranks surface fidelity. Sand and water are the slice after this one and will be judged inside whatever framing this milestone establishes.
+- Positioning is a real decision. Toothpicks travel down the defender's current depth lane, so roughly 27 percent of shots connected across 210 shots and 63 pops. Missing is the cost of standing in the wrong place.
+- One degree of freedom is enough. A drag along the wall plus hold-to-fire needs no virtual stick and no control clutter.
+- Rotating the layout so combat still runs left to right keeps the bipedal silhouettes in profile and gives the approach axis the long edge of the screen.
+
+That last point is what makes this a bounded milestone rather than a re-founding. Combat stays left to right, so the locked law in `AGENT_CONTEXT.md` needs no superseding. This is additive.
 
 ### Exact proof
 
-The battlefield frames deliberately rather than by engine default:
+The accepted mixed three-wave encounter, played with a defender:
 
-- an explicit framing decision for the arena camera rather than an inherited `keep_aspect` default
-- the playable surface fills a defined, intentional share of the screen in both portrait and landscape on phone aspect ratios
-- the castle, the spawn edge, and the full left-to-right combat lane are all visible at once in both orientations
-- no gameplay-relevant space sits outside the frame, and no large dead margin sits inside it
-- framing derives from named values rather than magic coordinates, so it can be retuned without hunting through the scene
-
-Whether this is solved by `keep_aspect`, FOV, camera placement, arena proportions, or an orientation-aware combination is an implementation decision for the milestone, made from what actually reads on a phone.
+- one `[DB:PLAYER:WALL_DEFENDER]` who exists only on a patrol path along the depth axis, owns its position and its own firing origin, and owns no damage or encounter outcome
+- one degree of freedom: a drag picks a point on the wall and the defender runs to it, clamped to the patrol path
+- **firing stays manual.** Hold to fire, at the accepted toothpick cadence. FIRE is the game's established verb and removing it is a separate question, not a side effect of adding a body
+- toothpicks originate from the defender at enemy height rather than from the castle roof marker
+- authored spawns gain a depth position, so a wave arrives spread across the patrol path instead of in a single file
+- `ArenaCamera` frames the patrol depth as well as the approach lane, and pitches to suit
+- the castle keeps its accepted ownership exactly: one `CastleChunk`, two health, typed `IMPACT`, destruction and persistence unchanged. Anything that crosses the wall line damages it as it does today
 
 ### Ownership
 
-- The arena scene owns battlefield framing. Framing is presentation and never changes spawn positions, castle placement, travel distances, or wave timing.
-- `MixedEncounter` keeps wave progression. `CastleChunk` keeps castle truth. Enemies keep movement and collision.
-- If arena proportions change, gameplay distances that depend on them must be preserved deliberately and proven, not adjusted to suit the camera.
-- Touch controls keep requesting intent only. Reframing must not move combat authority into the camera or the HUD.
+- The defender owns its position along the patrol path and the origin of the toothpicks it fires. It owns no damage outcome, no enemy state, no wave progression, and no castle truth.
+- `ToothpickProjectile` keeps `PIERCE` and its damage request. Being fired from a body rather than a marker changes where it starts, nothing else.
+- `BasicBubble` and its variants keep health, speed, movement, POP, and despawn.
+- `CastleChunk` keeps health, `IMPACT`, destruction, and persistence. The wall is presentation and a patrol path; it is not a second damageable thing.
+- `MixedEncounter` keeps the authored three-wave schedule, intermissions, and outcome. It gains a depth coordinate on spawns and nothing else.
+- `FirstUpgradeChoice` keeps its run-scoped decision. Skewer configures the defender's projectiles exactly as it configures the marker's today.
+- Touch input requests intent. It never becomes combat, movement authority, or encounter truth.
 
 ### Phone acceptance target
 
-- portrait and landscape both frame the battlefield deliberately, with no shallow-strip read and no large dead margin
-- castle, spawn edge, and the full combat lane are visible together in both orientations
-- enemy approach still reads as pressure, and Fast still reads as urgent at the new framing
-- Big Blub still reads as large relative to the frame
-- HUD, wave and castle messaging, terminal states, and the upgrade overlay stay readable and stay clear of the action
-- touch targets remain comfortable and do not overlap the battlefield read
-- rotating the device mid-run recovers to a correct frame without breaking the encounter
-- the accepted three-wave encounter, POP, castle consequence, upgrade choice, win/loss, and RETRY are all unchanged
-- no gameplay value, distance, or timing changed
+- choosing where to stand feels like a decision with weight, not chore-work beside the fire button
+- the drag is comfortable one-thumbed and the defender goes where the thumb asks
+- the defender is readable against sand, water, and bubbles at phone size
+- enemies arriving spread across the depth of the wall create genuine "which one do I take" pressure
+- Fast still reads as the urgent threat and Big Blub still reads as the slow siege problem
+- POP, castle consequence, wave timing, intermissions, the upgrade choice, win/loss, and RETRY all still behave as accepted
+- a leak still damages the castle, and two still lose the run
+- frame rate and thermals hold through a full three-wave run
+- controls stay clear of the battlefield read, and the HUD stays legible
 
 ### Non-goals
 
-- no sand shader, wet-sand shoreline, or animated water; that is the next slice and is judged inside this framing
-- no camera shake, push-in, dynamic tracking, or cinematic moves; this slice is static framing correctness
-- no new geometry, meshes, textures, or roster art
-- no lighting, glow, or material changes; `[DB:PRESENTATION:LIT_BEACH]` is accepted
-- no HUD redesign beyond what framing correctness requires
-- no wave, enemy, castle, or upgrade rebalance
-- no new input scheme or control layout
+- no multi-chunk castle, per-lane castle health, wall damage, or repair
+- no defender health, death, stamina, dodging, or melee
+- no second weapon, weapon switching, aiming, or manual targeting
+- no auto-fire; if hold-to-fire proves to be dead weight that becomes its own question
+- no new enemy archetype and no enemy pathing toward the defender
+- no wave rebalance beyond giving existing authored spawns a depth position
+- no upgrade catalog growth, economy, or progression
+- no sand or water shader work; that slice is still queued behind this one
+- no camera shake, push-in, or cinematic moves
 
 ## Must not drift into
 
-- generalized upgrade catalogs, currencies, shops, rarity, rerolls, or meta progression because one choice now exists
-- generalized wave DSLs, registries, procedural spawning, or universal navigation without a concrete need
-- multiple lanes/chunks, repair, or economy merely because they are future possibilities
-- new weapons or enemy mechanics without a bounded gameplay question
-- reopening accepted POP, castle, encounter, or upgrade behavior without new player evidence or a measured defect
+- a second damageable structure, multi-chunk castle, or repair because a wall now exists
+- defender health, death, or dodging because the defender now has a body
+- aiming, weapon switching, or a second weapon family
+- generalized upgrade catalogs, currencies, shops, or meta progression
+- generalized wave DSLs, registries, procedural spawning, or universal navigation
+- reopening accepted POP, castle, encounter, upgrade, lighting, or framing behavior without new player evidence or a measured defect
 - pooling or speculative optimization without measurements
 - native-store packaging before platform/store priority is deliberately selected
 
 ## Immediate sequence
 
-1. Establish deliberate arena framing on `agent/camera-framing`.
-2. Keep every accepted gameplay fixture green; framing must not move a gameplay assertion.
-3. Add a deterministic proof that framing is explicit rather than inherited from an engine default, and that gameplay distances are unchanged.
-4. Deploy the exact feature head to the phone review booth with a deliberate `workflow_dispatch` run.
-5. Judge both orientations, mid-run rotation, enemy pressure, HUD clearance, and touch comfort on a phone.
-6. Tune only evidenced defects inside this milestone.
-7. Promote only after explicit Game Director acceptance.
+1. Build the defender, patrol path, and firing origin on `agent/wall-defender`.
+2. Give authored spawns a depth position and reframe the camera for the patrol band.
+3. Keep every accepted gameplay fixture green. Encounter timing, POP, castle consequence, and the upgrade choice are regression surfaces, not things to adjust.
+4. Add a deterministic proof that the defender owns position and firing origin only, that the castle keeps its accepted ownership, and that no accepted gameplay value moved.
+5. Deploy the exact feature head to the phone review booth with a deliberate `workflow_dispatch` run.
+6. Judge positioning weight, thumb comfort, readability, and wave pressure on a phone.
+7. Tune only evidenced defects inside this milestone.
+8. Promote only after explicit Game Director acceptance, then retire `agent/iso-wall-prototype`.
 
 ## Standing laws
 
