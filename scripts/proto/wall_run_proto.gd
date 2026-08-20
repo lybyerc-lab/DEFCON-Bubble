@@ -20,6 +20,10 @@ extends Node3D
 # Because combat stays left to right, this needs no locked law superseded. It is
 # additive: a defender with a body, not a re-founding.
 
+# Bump this every deploy. If the phone shows an older label, the browser is
+# serving a cached build and nothing below is the explanation for what you see.
+const BUILD_LABEL: String = "BUILD 4"
+
 const BASIC_BUBBLE: PackedScene = preload("res://scenes/enemies/basic_bubble.tscn")
 const FAST_BUBBLE: PackedScene = preload("res://scenes/enemies/fast_bubble.tscn")
 const HEAVY_BUBBLE: PackedScene = preload("res://scenes/enemies/heavy_bubble.tscn")
@@ -62,6 +66,7 @@ const FIRE_INTERVAL_SECONDS: float = 0.28
 @onready var move_zone: Control = $ProtoHUD/MoveZone
 @onready var fire_zone: Control = $ProtoHUD/FireZone
 @onready var readout: Label = $ProtoHUD/Readout
+@onready var beach: Node3D = $BeachEnvironment
 
 var _target_z: float = PATROL_CENTER_Z
 var _spawn_timer: float = 0.0
@@ -70,11 +75,14 @@ var _firing: bool = false
 var _popped_count: int = 0
 var _leaked_count: int = 0
 var _spawn_cycle: int = 0
+var _shots_fired: int = 0
+var _beach_note: String = ""
 var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
 	_rng.seed = 20260819
+	_invert_beach()
 	camera.fov = CAMERA_FOV_DEGREES
 	camera.keep_aspect = Camera3D.KEEP_HEIGHT
 	camera.current = true
@@ -91,6 +99,25 @@ func _process(delta: float) -> void:
 	_retire_reached_enemies()
 	_tick_spawning(delta)
 	_tick_firing(delta)
+
+
+func _invert_beach() -> void:
+	# Sea takes the foreground strip nearest the camera; sand runs away from it.
+	# Done in code rather than through scene instance overrides so a failure is
+	# visible in the readout instead of silently leaving the beach as it was.
+	var bands: Dictionary = {
+		"Sand": Vector3(0.0, 0.0, -12.0),
+		"Water": Vector3(0.0, -0.045, 5.0),
+		"ShoreFoam": Vector3(0.0, 0.006, 0.2),
+	}
+	var moved: int = 0
+	for band_name: String in bands:
+		var band: Node3D = beach.get_node_or_null(NodePath(band_name)) as Node3D
+		if band == null:
+			continue
+		band.position = bands[band_name]
+		moved += 1
+	_beach_note = "" if moved == bands.size() else "  BEACH %d/%d" % [moved, bands.size()]
 
 
 # --- framing -----------------------------------------------------------------
@@ -171,6 +198,8 @@ func _tick_firing(delta: float) -> void:
 	if not _firing or _fire_timer > 0.0:
 		return
 	_fire_timer = FIRE_INTERVAL_SECONDS
+	_shots_fired += 1
+	_update_readout()
 	var projectile: Area3D = PROTO_PROJECTILE.instantiate() as Area3D
 	projectile_root.add_child(projectile)
 	projectile.global_position = Vector3(WALL_X + 0.6, PROJECTILE_Y, player.position.z)
@@ -228,7 +257,10 @@ func _on_bubble_popped(_bubble_id: StringName) -> void:
 
 
 func _update_readout() -> void:
-	readout.text = "PROTOTYPE  drag left up/down to patrol   hold right to fire\nPOPPED %d    REACHED WALL %d" % [
+	readout.text = "%s   drag left up/down to patrol   hold right to fire%s\nSHOTS %d    POPPED %d    REACHED WALL %d" % [
+		BUILD_LABEL,
+		_beach_note,
+		_shots_fired,
 		_popped_count,
 		_leaked_count,
 	]
