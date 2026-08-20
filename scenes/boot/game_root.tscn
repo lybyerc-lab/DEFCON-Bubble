@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/game_root.gd" id="1_root"]
-[ext_resource type="PackedScene" path="res://scenes/arena/beach_arena.tscn" id="2_arena"]
+[ext_resource type="PackedScene" path="res://scenes/proto/wall_run_proto.tscn" id="2_arena"]
 
 [node name="GameRoot" type="Node3D"]
 script = ExtResource("1_root")
