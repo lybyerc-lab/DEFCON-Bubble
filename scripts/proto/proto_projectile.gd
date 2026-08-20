@@ -4,7 +4,7 @@ extends Area3D
 # THROWAWAY. Exists only to answer one question on a phone. Not a contract, not
 # a milestone, not something to build on. Delete with the branch.
 #
-# Fires away from the wall and pierces up to two bubbles, so the same prototype
+# Flies +X from the wall into the advancing line, piercing up to two bubbles, so the same prototype
 # also lets the Skewer question be felt rather than argued.
 
 const SPEED_MPS: float = 16.0
@@ -21,7 +21,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	position.z -= SPEED_MPS * delta
+	position.x += SPEED_MPS * delta
 	_age += delta
 	if _age >= LIFETIME_SECONDS:
 		queue_free()

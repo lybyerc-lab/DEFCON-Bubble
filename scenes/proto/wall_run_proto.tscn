@@ -9,7 +9,7 @@ roughness = 0.93
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall"]
 material = SubResource("Material_wall")
-size = Vector3(18, 1.2, 0.9)
+size = Vector3(0.9, 1.2, 10)
 
 [sub_resource type="StandardMaterial3D" id="Material_player"]
 albedo_color = Color(0.93, 0.29, 0.21, 1)
@@ -37,11 +37,11 @@ script = ExtResource("1_proto")
 [node name="Camera3D" type="Camera3D" parent="."]
 
 [node name="Wall" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0.6, 0)
+position = Vector3(-6, 0.6, 0)
 mesh = SubResource("BoxMesh_wall")
 
 [node name="Player" type="Node3D" parent="."]
-position = Vector3(0, 1.62, 0)
+position = Vector3(-6, 1.62, 0)
 
 [node name="Body" type="MeshInstance3D" parent="Player"]
 mesh = SubResource("CapsuleMesh_player")

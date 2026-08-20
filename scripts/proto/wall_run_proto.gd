@@ -3,39 +3,42 @@ extends Node3D
 # [DB:PROTO:WALL_RUN]
 # THROWAWAY PROTOTYPE. Not a milestone, not a contract, no promotion path.
 #
-# It exists to answer one question with a thumb: does running along a wall in an
-# elevated three-quarter view, while firing, feel good on a phone?
+# Rotated iteration. Combat runs left to right, as the locked law has always
+# said: enemies advance along -X, from the right of the screen toward the wall
+# on the left. What is new is that the defender has a body and patrols the wall
+# in depth, along Z, which reads as up and down the screen.
 #
-# Everything here is deliberately self-contained and disposable. It reuses the
-# accepted bubble scenes and lit environment for an honest visual read, but owns
-# its own movement, firing, and framing rather than touching any accepted system.
+# The rotation matters for two reasons beyond taste. Enemies are seen in profile
+# again, so the bipedal silhouettes the roster is built on still read. And the
+# approach axis gets the long edge of the screen, which is where the accepted
+# tension lives. Neither was true when the wall ran across the screen.
 #
-# Axis note: BasicBubble advances along its own -X. Rather than modify accepted
-# code, enemies live under a container yawed 90 degrees, which turns that advance
-# into world +Z, toward the wall and the camera. Their authored facing follows.
+# Because combat stays left to right, this needs no locked law superseded. It is
+# additive: a defender with a body, not a re-founding.
 
 const BASIC_BUBBLE: PackedScene = preload("res://scenes/enemies/basic_bubble.tscn")
 const FAST_BUBBLE: PackedScene = preload("res://scenes/enemies/fast_bubble.tscn")
 const HEAVY_BUBBLE: PackedScene = preload("res://scenes/enemies/heavy_bubble.tscn")
 const PROTO_PROJECTILE: PackedScene = preload("res://scenes/proto/proto_projectile.tscn")
 
-# Wall and player
-const WALL_HALF_LENGTH: float = 9.0
-const WALL_TOP_Y: float = 1.2
+# Wall and defender. The wall runs along Z; the defender patrols its length.
+const WALL_X: float = -6.0
+const PATROL_HALF_LENGTH: float = 4.6
 const PLAYER_Y: float = 1.62
-const PLAYER_SPEED_MPS: float = 9.0
+const PLAYER_SPEED_MPS: float = 8.0
 
-# Camera. Yaw stays at zero so a horizontal drag maps to horizontal movement with
-# nothing to learn. Raise it for a more isometric read once the control is judged.
-const CAMERA_PITCH_DEGREES: float = -42.0
-const CAMERA_YAW_DEGREES: float = 0.0
+# THE DIAL. Shallower sits closer to the accepted side-on view and foreshortens
+# depth movement less. Steeper reads more tactical but costs enemy silhouette.
+const CAMERA_PITCH_DEGREES: float = -36.0
+
 const CAMERA_FOV_DEGREES: float = 50.0
-const FRAMED_HALF_WIDTH: float = 11.0
-const FRAMED_HALF_HEIGHT: float = 6.0
-const FRAME_TARGET := Vector3(0.0, 1.0, -3.0)
+const FRAMED_HALF_WIDTH: float = 8.5
+const FRAMED_HALF_HEIGHT: float = 4.2
+const FRAME_TARGET := Vector3(1.5, 1.0, 0.0)
 
-# Enemies
-const SPAWN_Z: float = -16.0
+# Enemies advance -X natively, so no container rotation is needed here.
+const SPAWN_X: float = 9.0
+const WALL_REACH_X: float = -5.4
 const SPAWN_INTERVAL_SECONDS: float = 1.1
 const FIRE_INTERVAL_SECONDS: float = 0.28
 
@@ -47,7 +50,7 @@ const FIRE_INTERVAL_SECONDS: float = 0.28
 @onready var fire_zone: Control = $ProtoHUD/FireZone
 @onready var readout: Label = $ProtoHUD/Readout
 
-var _target_x: float = 0.0
+var _target_z: float = 0.0
 var _spawn_timer: float = 0.0
 var _fire_timer: float = 0.0
 var _firing: bool = false
@@ -62,7 +65,6 @@ func _ready() -> void:
 	camera.fov = CAMERA_FOV_DEGREES
 	camera.keep_aspect = Camera3D.KEEP_HEIGHT
 	camera.current = true
-	enemy_root.rotation_degrees = Vector3(0.0, 90.0, 0.0)
 
 	move_zone.gui_input.connect(_on_move_input)
 	fire_zone.gui_input.connect(_on_fire_input)
@@ -73,7 +75,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_advance_player(delta)
-	_advance_enemies(delta)
+	_retire_reached_enemies()
 	_tick_spawning(delta)
 	_tick_firing(delta)
 
@@ -90,51 +92,50 @@ func _reframe() -> void:
 		FRAMED_HALF_HEIGHT / tan_half,
 		FRAMED_HALF_WIDTH / (tan_half * aspect),
 	)
-	camera.rotation_degrees = Vector3(CAMERA_PITCH_DEGREES, CAMERA_YAW_DEGREES, 0.0)
+	camera.rotation_degrees = Vector3(CAMERA_PITCH_DEGREES, 0.0, 0.0)
 	var forward: Vector3 = -camera.global_transform.basis.z
 	camera.global_position = FRAME_TARGET - forward * distance
 
 
-# --- player ------------------------------------------------------------------
+# --- defender ----------------------------------------------------------------
 
 func _on_move_input(event: InputEvent) -> void:
-	# Drag anywhere in the left zone. The finger picks a point on the wall; the
-	# player runs to it. One degree of freedom, no stick, nothing to learn.
+	# Vertical drag picks a point along the wall's depth. Screen up is further
+	# away, screen down is nearer the camera. One degree of freedom, no stick.
 	var pressed: bool = false
-	var local_x: float = 0.0
+	var local_y: float = 0.0
 	var touch := event as InputEventScreenTouch
 	if touch != null and touch.pressed:
 		pressed = true
-		local_x = touch.position.x
+		local_y = touch.position.y
 	var drag := event as InputEventScreenDrag
 	if drag != null:
 		pressed = true
-		local_x = drag.position.x
+		local_y = drag.position.y
 	var mouse := event as InputEventMouseButton
 	if mouse != null and mouse.pressed:
 		pressed = true
-		local_x = mouse.position.x
+		local_y = mouse.position.y
 	var motion := event as InputEventMouseMotion
 	if motion != null and (motion.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
 		pressed = true
-		local_x = motion.position.x
+		local_y = motion.position.y
 	if not pressed:
 		return
 
-	var width: float = maxf(move_zone.size.x, 1.0)
-	var t: float = clampf(local_x / width, 0.0, 1.0)
-	_target_x = lerpf(-WALL_HALF_LENGTH, WALL_HALF_LENGTH, t)
+	var height: float = maxf(move_zone.size.y, 1.0)
+	var t: float = clampf(local_y / height, 0.0, 1.0)
+	_target_z = lerpf(-PATROL_HALF_LENGTH, PATROL_HALF_LENGTH, t)
 
 
 func _advance_player(delta: float) -> void:
-	var current: float = player.position.x
-	var step: float = PLAYER_SPEED_MPS * delta
-	player.position.x = clampf(
-		move_toward(current, _target_x, step),
-		-WALL_HALF_LENGTH,
-		WALL_HALF_LENGTH,
-	)
+	player.position.x = WALL_X
 	player.position.y = PLAYER_Y
+	player.position.z = clampf(
+		move_toward(player.position.z, _target_z, PLAYER_SPEED_MPS * delta),
+		-PATROL_HALF_LENGTH,
+		PATROL_HALF_LENGTH,
+	)
 
 
 # --- firing ------------------------------------------------------------------
@@ -155,7 +156,7 @@ func _tick_firing(delta: float) -> void:
 	_fire_timer = FIRE_INTERVAL_SECONDS
 	var projectile: Area3D = PROTO_PROJECTILE.instantiate() as Area3D
 	projectile_root.add_child(projectile)
-	projectile.global_position = Vector3(player.position.x, PLAYER_Y, -0.4)
+	projectile.global_position = Vector3(WALL_X + 0.6, PLAYER_Y, player.position.z)
 
 
 # --- enemies -----------------------------------------------------------------
@@ -169,7 +170,7 @@ func _tick_spawning(delta: float) -> void:
 
 
 func _spawn_bubble() -> void:
-	# A rough mix so all three silhouettes get judged at this camera angle.
+	# A rough mix so all three silhouettes get judged in profile at this angle.
 	_spawn_cycle += 1
 	var scene: PackedScene = BASIC_BUBBLE
 	if _spawn_cycle % 5 == 0:
@@ -180,20 +181,22 @@ func _spawn_bubble() -> void:
 	var bubble: BasicBubble = scene.instantiate() as BasicBubble
 	bubble.advance_enabled = true
 	enemy_root.add_child(bubble)
-	# EnemyRoot is yawed 90 degrees: local +X maps to world -Z, local +Z to world +X.
-	var lateral: float = _rng.randf_range(-WALL_HALF_LENGTH + 1.0, WALL_HALF_LENGTH - 1.0)
-	bubble.position = Vector3(-SPAWN_Z, 0.0, lateral)
+	bubble.position = Vector3(
+		SPAWN_X,
+		0.0,
+		_rng.randf_range(-PATROL_HALF_LENGTH, PATROL_HALF_LENGTH),
+	)
 	bubble.popped.connect(_on_bubble_popped)
 
 
-func _advance_enemies(_delta: float) -> void:
-	# BasicBubble moves itself. This only retires anything that reached the wall,
+func _retire_reached_enemies() -> void:
+	# BasicBubble moves itself along -X. This only retires what reached the wall,
 	# so the prototype can report leaks without owning combat rules.
 	for child: Node in enemy_root.get_children():
 		var bubble: BasicBubble = child as BasicBubble
 		if bubble == null or bubble.is_popped():
 			continue
-		if bubble.global_position.z >= -0.6:
+		if bubble.position.x <= WALL_REACH_X:
 			_leaked_count += 1
 			bubble.queue_free()
 			_update_readout()
@@ -205,7 +208,7 @@ func _on_bubble_popped(_bubble_id: StringName) -> void:
 
 
 func _update_readout() -> void:
-	readout.text = "PROTOTYPE  drag left to run   hold right to fire\nPOPPED %d    REACHED WALL %d" % [
+	readout.text = "PROTOTYPE  drag left up/down to patrol   hold right to fire\nPOPPED %d    REACHED WALL %d" % [
 		_popped_count,
 		_leaked_count,
 	]
