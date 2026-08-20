@@ -11,7 +11,7 @@ material = SubResource("Material_toothpick")
 size = Vector3(0.9, 0.06, 0.06)
 
 [sub_resource type="BoxShape3D" id="BoxShape_toothpick"]
-size = Vector3(0.9, 0.16, 0.16)
+size = Vector3(0.9, 0.6, 0.4)
 
 [node name="ProtoProjectile" type="Area3D"]
 collision_layer = 4

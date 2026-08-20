@@ -3,7 +3,11 @@ extends Node3D
 # [DB:PROTO:WALL_RUN]
 # THROWAWAY PROTOTYPE. Not a milestone, not a contract, no promotion path.
 #
-# Rotated iteration. Combat runs left to right, as the locked law has always
+# Rotated iteration with the beach inverted: the sea owns the foreground strip
+# nearest the camera and the beach runs away from it, so the defender sits back
+# in the frame instead of pressed against the bottom edge.
+#
+# Combat runs left to right, as the locked law has always
 # said: enemies advance along -X, from the right of the screen toward the wall
 # on the left. What is new is that the defender has a body and patrols the wall
 # in depth, along Z, which reads as up and down the screen.
@@ -23,9 +27,18 @@ const PROTO_PROJECTILE: PackedScene = preload("res://scenes/proto/proto_projecti
 
 # Wall and defender. The wall runs along Z; the defender patrols its length.
 const WALL_X: float = -6.0
-const PATROL_HALF_LENGTH: float = 4.6
-const PLAYER_Y: float = 1.62
+# The patrol band sits back from the camera so the sea can own the foreground.
+const PATROL_CENTER_Z: float = -3.0
+const PATROL_HALF_LENGTH: float = 3.0
+const PLAYER_Y: float = 1.12
 const PLAYER_SPEED_MPS: float = 8.0
+
+# Bubbles ride at y=1.0, the same height the accepted encounter's SpawnMarker
+# uses. Toothpicks fire just above their centre. The first pass spawned them at
+# y=0 and fired from the defender's shoulder, so every shot flew overhead and
+# nothing could be damaged.
+const BUBBLE_Y: float = 1.0
+const PROJECTILE_Y: float = 1.10
 
 # THE DIAL. Shallower sits closer to the accepted side-on view and foreshortens
 # depth movement less. Steeper reads more tactical but costs enemy silhouette.
@@ -50,7 +63,7 @@ const FIRE_INTERVAL_SECONDS: float = 0.28
 @onready var fire_zone: Control = $ProtoHUD/FireZone
 @onready var readout: Label = $ProtoHUD/Readout
 
-var _target_z: float = 0.0
+var _target_z: float = PATROL_CENTER_Z
 var _spawn_timer: float = 0.0
 var _fire_timer: float = 0.0
 var _firing: bool = false
@@ -125,7 +138,11 @@ func _on_move_input(event: InputEvent) -> void:
 
 	var height: float = maxf(move_zone.size.y, 1.0)
 	var t: float = clampf(local_y / height, 0.0, 1.0)
-	_target_z = lerpf(-PATROL_HALF_LENGTH, PATROL_HALF_LENGTH, t)
+	_target_z = lerpf(
+		PATROL_CENTER_Z - PATROL_HALF_LENGTH,
+		PATROL_CENTER_Z + PATROL_HALF_LENGTH,
+		t,
+	)
 
 
 func _advance_player(delta: float) -> void:
@@ -133,8 +150,8 @@ func _advance_player(delta: float) -> void:
 	player.position.y = PLAYER_Y
 	player.position.z = clampf(
 		move_toward(player.position.z, _target_z, PLAYER_SPEED_MPS * delta),
-		-PATROL_HALF_LENGTH,
-		PATROL_HALF_LENGTH,
+		PATROL_CENTER_Z - PATROL_HALF_LENGTH,
+		PATROL_CENTER_Z + PATROL_HALF_LENGTH,
 	)
 
 
@@ -156,7 +173,7 @@ func _tick_firing(delta: float) -> void:
 	_fire_timer = FIRE_INTERVAL_SECONDS
 	var projectile: Area3D = PROTO_PROJECTILE.instantiate() as Area3D
 	projectile_root.add_child(projectile)
-	projectile.global_position = Vector3(WALL_X + 0.6, PLAYER_Y, player.position.z)
+	projectile.global_position = Vector3(WALL_X + 0.6, PROJECTILE_Y, player.position.z)
 
 
 # --- enemies -----------------------------------------------------------------
@@ -183,8 +200,11 @@ func _spawn_bubble() -> void:
 	enemy_root.add_child(bubble)
 	bubble.position = Vector3(
 		SPAWN_X,
-		0.0,
-		_rng.randf_range(-PATROL_HALF_LENGTH, PATROL_HALF_LENGTH),
+		BUBBLE_Y,
+		_rng.randf_range(
+			PATROL_CENTER_Z - PATROL_HALF_LENGTH,
+			PATROL_CENTER_Z + PATROL_HALF_LENGTH,
+		),
 	)
 	bubble.popped.connect(_on_bubble_popped)
 
