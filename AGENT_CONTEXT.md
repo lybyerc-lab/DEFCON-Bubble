@@ -59,9 +59,13 @@ Two engineering laws were promoted alongside it and are enforced rather than adv
 
 The lit beach was phone-tested and promoted at `27f0e660f1bcf6341ca0b672b20c5e4de840df16`. `BeachEnvironment` owns a `WorldEnvironment` with a procedural sky, sky-sourced ambient, ACES tonemapping, and restrained glow, and `shaders/soap_film.gdshader` is the single source of truth for the bubble family's surface, shared by the body and every limb.
 
-The current bounded milestone is `[DB:CAMERA:ORIENTATION_FRAMING]`: make the battlefield frame deliberately on a phone in both orientations. `Camera3D` in the arena sets no `keep_aspect`, so Godot's `KEEP_HEIGHT` default locks vertical FOV and expands horizontal with the display aspect; on a phone in landscape the 24-by-12 playable surface reads as a shallow strip with dead space beside it. Framing is presentation and must never move spawn positions, castle placement, travel distances, or wave timing.
+The orientation framing milestone is accepted, and the game is locked to landscape (`DB-DEC-013`).
 
-Do not let it widen into sand or water shaders, camera shake or cinematic moves, new geometry, lighting or material changes, HUD redesign, or gameplay rebalance. Sand and water are the slice after this one, judged inside whatever framing this milestone establishes.
+The current bounded milestone is `[DB:PLAYER:WALL_DEFENDER]`: the game gets a player. Until now firing came from a marker on the castle roof and there was no body, so a run's only decisions were when to fire and which upgrade to take. The defender patrols a wall along the depth axis with one degree of freedom, fires from its own position at enemy height, and owns no damage or encounter outcome. Authored spawns gain a depth position so a wave arrives spread across the wall.
+
+This was prototyped and phone-tested before being scoped. Because the layout keeps combat running left to right, the locked left-to-right law needs no superseding; this milestone is additive.
+
+Do not let it widen into a multi-chunk or damageable castle, defender health or death, aiming or a second weapon, auto-fire, new archetypes, wave rebalance, upgrade catalog growth, or surface shaders. See `docs/ACTIVE_HANDOFF.md` for the exact proof, ownership, and phone acceptance gate.
 
 See `docs/ACTIVE_HANDOFF.md` for current execution state and `docs/MONSTER_ROSTER.md` for the approved enemy-family source.
 
@@ -71,7 +75,7 @@ Resolve live GitHub state before assuming the status of any branch, pull request
 
 Use stable searchable anchors only when they materially improve navigation or ownership. Vocabulary starts with `[DB:<DOMAIN>:<RESPONSIBILITY>]`.
 
-Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`, `[DB:UPGRADE:DEFINITION]`, `[DB:UPGRADE:FIRST_CHOICE]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`.
+Examples: `[DB:CORE:GAME_ROOT]`, `[DB:COMBAT:DAMAGE]`, `[DB:COMBAT:POP]`, `[DB:CASTLE:CHUNK]`, `[DB:WAVE:FIRST_DEFENSE]`, `[DB:ENCOUNTER:MIXED_THREE_WAVE]`, `[DB:UPGRADE:DEFINITION]`, `[DB:UPGRADE:FIRST_CHOICE]`, `[DB:PLAYER:WALL_DEFENDER]`, `[DB:INPUT:PLAYER_INTENT]`, `[DB:PLATFORM:MOBILE]`, `[DB:PLATFORM:WEB_PREVIEW]`, `[DB:PERF:QUALITY]`.
 
 ## Do not
 

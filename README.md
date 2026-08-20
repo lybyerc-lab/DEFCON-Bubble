@@ -8,7 +8,7 @@ The intended game is not a reduced mobile side project. It is the full absurd be
 
 ## Project status
 
-Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, First Defense, the phone-accepted mixed three-wave Basic/Fast/Heavy encounter, `[DB:UPGRADE:FIRST_CHOICE]`, and `[DB:PRESENTATION:LIT_BEACH]` are accepted on `main`. The upgrade edge is one safe post-Wave-1 choice between a two-damage longer Skewer and +1 Shell Reinforcement durability, with no currency or progression tree. The beach is lit by a sky-sourced `WorldEnvironment`, and one shared soap-film shader covers the whole bubble family. The current bounded milestone is `[DB:CAMERA:ORIENTATION_FRAMING]`. Always verify live branches, PRs, and CI before trusting this summary.
+Foundation 0, the shared typed damage boundary, Bubble #1 POP, castle impact, First Defense, the phone-accepted mixed three-wave Basic/Fast/Heavy encounter, `[DB:UPGRADE:FIRST_CHOICE]`, and `[DB:PRESENTATION:LIT_BEACH]` are accepted on `main`. The upgrade edge is one safe post-Wave-1 choice between a two-damage longer Skewer and +1 Shell Reinforcement durability, with no currency or progression tree. The beach is lit by a sky-sourced `WorldEnvironment`, and one shared soap-film shader covers the whole bubble family. The game is locked to landscape. The current bounded milestone is `[DB:PLAYER:WALL_DEFENDER]`: a defender who patrols the wall, making where you stand a real decision. Always verify live branches, PRs, and CI before trusting this summary.
 
 ## Product target
 
