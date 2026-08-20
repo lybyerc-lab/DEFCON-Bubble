@@ -200,7 +200,13 @@ func _spawn_bubble(spawn_plan: EncounterSpawnPlan, slot_index: int) -> void:
 	_current_spawned_ids[bubble_id] = true
 	_current_spawned_count += 1
 	bubble_container.add_child(bubble)
-	bubble.global_position = spawn_marker.global_position
+	# The wave arrives spread across the wall's depth. The marker still owns
+	# where a wave enters; the plan only offsets along the patrol axis.
+	bubble.global_position = spawn_marker.global_position + Vector3(
+		0.0,
+		0.0,
+		spawn_plan.spawn_depth_meters,
+	)
 	_all_bubbles.append(bubble)
 
 
