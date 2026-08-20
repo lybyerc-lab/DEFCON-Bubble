@@ -112,5 +112,6 @@ Whether this is solved by `keep_aspect`, FOV, camera placement, arena proportion
 - Automation proves; promotion is deliberate.
 - Automation must exercise what the exported build actually runs; keep essential calls outside `assert()`.
 - The Pages review booth serves `main` on push; branch previews are deliberate.
+- The game is played in landscape; the approach axis owns the long edge of the screen.
 - Player-facing mobile behavior needs representative phone/touch evidence.
 - No secrets in Git and no new dependency without explicit justification/provenance.

@@ -35,6 +35,12 @@ Do not remove a core fantasy beat merely because a brute-force implementation wo
 - Not the final performance authority and not the shipped-product architecture.
 - Preview infrastructure must stay replaceable and must not become a gameplay dependency.
 
+## Orientation
+
+- DEFCON BUBBLE is played in landscape. `display/window/handheld/orientation` is `sensor_landscape`, so both landscape rotations are allowed.
+- Combat runs left to right, and the approach axis takes the long edge of the screen. A phone cannot give both the patrol axis and the approach axis the long edge; approach wins because approach pressure is the accepted core tension.
+- Portrait is not a supported play orientation. Framing code still handles portrait aspects gracefully for rotation transitions and unusual viewports; that is defensiveness, not support.
+
 ## Renderer policy
 
 - Desktop development default: Forward+.
