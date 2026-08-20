@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://scripts/proof/mixed_encounter_range.gd" id="1_range"]
 [ext_resource type="PackedScene" path="res://scenes/castle/castle_chunk.tscn" id="2_castle"]
@@ -11,21 +11,25 @@
 [ext_resource type="Script" path="res://scripts/upgrades/upgrade_definition.gd" id="9_upgrade_definition"]
 [ext_resource type="Resource" path="res://data/upgrades/skewer.tres" id="10_skewer"]
 [ext_resource type="Resource" path="res://data/upgrades/shell_reinforcement.tres" id="11_shell"]
+[ext_resource type="PackedScene" path="res://scenes/player/wall_defender.tscn" id="12_defender"]
 
 [sub_resource type="Resource" id="Spawn_w1_01"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 0.0
+spawn_depth_meters = -2.0
 
 [sub_resource type="Resource" id="Spawn_w1_02"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 1.6
+spawn_depth_meters = 0.0
 
 [sub_resource type="Resource" id="Spawn_w1_03"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 3.2
+spawn_depth_meters = 2.0
 
 [sub_resource type="Resource" id="Wave_01"]
 script = ExtResource("5_wave_plan")
@@ -37,21 +41,25 @@ spawns = Array[ExtResource("4_spawn_plan")]([SubResource("Spawn_w1_01"), SubReso
 script = ExtResource("4_spawn_plan")
 kind = &"fast"
 spawn_at_seconds = 0.0
+spawn_depth_meters = -2.4
 
 [sub_resource type="Resource" id="Spawn_w2_02"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 1.2
+spawn_depth_meters = 1.2
 
 [sub_resource type="Resource" id="Spawn_w2_03"]
 script = ExtResource("4_spawn_plan")
 kind = &"fast"
 spawn_at_seconds = 4.2
+spawn_depth_meters = -1.2
 
 [sub_resource type="Resource" id="Spawn_w2_04"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 5.4
+spawn_depth_meters = 2.4
 
 [sub_resource type="Resource" id="Wave_02"]
 script = ExtResource("5_wave_plan")
@@ -63,26 +71,31 @@ spawns = Array[ExtResource("4_spawn_plan")]([SubResource("Spawn_w2_01"), SubReso
 script = ExtResource("4_spawn_plan")
 kind = &"heavy"
 spawn_at_seconds = 0.0
+spawn_depth_meters = 0.0
 
 [sub_resource type="Resource" id="Spawn_w3_02"]
 script = ExtResource("4_spawn_plan")
 kind = &"fast"
 spawn_at_seconds = 0.9
+spawn_depth_meters = -2.4
 
 [sub_resource type="Resource" id="Spawn_w3_03"]
 script = ExtResource("4_spawn_plan")
 kind = &"basic"
 spawn_at_seconds = 2.0
+spawn_depth_meters = 2.4
 
 [sub_resource type="Resource" id="Spawn_w3_04"]
 script = ExtResource("4_spawn_plan")
 kind = &"fast"
 spawn_at_seconds = 5.1
+spawn_depth_meters = -1.2
 
 [sub_resource type="Resource" id="Spawn_w3_05"]
 script = ExtResource("4_spawn_plan")
 kind = &"fast"
 spawn_at_seconds = 6.0
+spawn_depth_meters = 1.2
 
 [sub_resource type="Resource" id="Wave_03"]
 script = ExtResource("5_wave_plan")
@@ -138,8 +151,8 @@ script = ExtResource("1_range")
 [node name="CastleChunk" parent="." instance=ExtResource("2_castle")]
 position = Vector3(-4.4, 0.7, 0)
 
-[node name="ProjectileOrigin" type="Marker3D" parent="CastleChunk"]
-position = Vector3(0.25, 0.82, 0)
+[node name="WallDefender" parent="." instance=ExtResource("12_defender")]
+position = Vector3(-3.3, 0, 0)
 
 [node name="MixedEncounter" type="Node3D" parent="."]
 script = ExtResource("3_encounter")
@@ -231,6 +244,16 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 27
 text = "CASTLE: 2 / 2"
 horizontal_alignment = 2
+
+[node name="PatrolZone" type="Control" parent="TouchHUD"]
+layout_mode = 3
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.2
+anchor_right = 0.45
+anchor_bottom = 0.78
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TouchControls" type="Control" parent="TouchHUD"]
 layout_mode = 3

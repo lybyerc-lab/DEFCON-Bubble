@@ -79,5 +79,8 @@ jobs:
       - name: Run camera framing proof
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/camera_framing_smoke.gd
 
+      - name: Run wall defender proof
+        run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --script res://tests/wall_defender_smoke.gd
+
       - name: Boot main scene headlessly
         run: .godot-ci/Godot_v4.7.1-stable_linux.x86_64 --headless --path . --quit-after 3

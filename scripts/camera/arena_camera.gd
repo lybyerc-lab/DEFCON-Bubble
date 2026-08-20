@@ -25,6 +25,8 @@ extends Camera3D
 # moves them, these change deliberately and the proof fails until they agree.
 const LANE_CENTER := Vector3(0.8, 1.0, 0.0)
 const FRAMED_HALF_WIDTH_METERS: float = 9.0
+# Must now cover the patrol depth as well as creature height. A 6 m patrol at
+# 30 degrees projects to about 3 m of vertical, plus roughly 1.7 m of height.
 const FRAMED_HALF_HEIGHT_METERS: float = 3.0
 
 # Landscape keeps a narrow, undistorted read. Portrait has to open up: reaching
@@ -35,7 +37,10 @@ const PORTRAIT_FOV_DEGREES: float = 70.0
 
 # Landscape keeps the accepted shallow beach angle. Portrait has to look further
 # down or it frames mostly sky to reach the same horizontal span.
-const LANDSCAPE_PITCH_DEGREES: float = -22.0
+# Steepened from -22 for [DB:PLAYER:WALL_DEFENDER]. The defender patrols along
+# depth, and at the old shallow angle that movement was foreshortened almost to
+# nothing. Steeper reads the patrol clearly while keeping enemies in profile.
+const LANDSCAPE_PITCH_DEGREES: float = -30.0
 const PORTRAIT_PITCH_DEGREES: float = -34.0
 const LANDSCAPE_ASPECT: float = 16.0 / 9.0
 const PORTRAIT_ASPECT: float = 9.0 / 16.0

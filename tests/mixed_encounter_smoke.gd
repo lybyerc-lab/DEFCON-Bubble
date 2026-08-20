@@ -48,7 +48,7 @@ func _prove_three_wave_victory_with_persistent_damage() -> void:
 	var wave_label: Label = range_root.get_node("TouchHUD/EncounterHUD/WaveLabel") as Label
 	var remaining_label: Label = range_root.get_node("TouchHUD/EncounterHUD/RemainingLabel") as Label
 	var castle_label: Label = range_root.get_node("TouchHUD/EncounterHUD/CastleLabel") as Label
-	var projectile_origin: Marker3D = range_root.get_node("CastleChunk/ProjectileOrigin") as Marker3D
+	var defender: WallDefender = range_root.get_node("WallDefender") as WallDefender
 	encounter.set_physics_process(false)
 
 	_check(encounter.current_state() == MixedEncounter.EncounterState.WAVE_ACTIVE, "READY must enter WAVE_ACTIVE")
@@ -60,14 +60,28 @@ func _prove_three_wave_victory_with_persistent_damage() -> void:
 	_check(wave_label.text == "WAVE 1 / 3" and remaining_label.text == "LEFT: 3", "HUD must show wave 1 and current-wave remaining")
 	_check(not fire_button.disabled and reset_button.text == "RESET", "FIRE and RESET must be active during a wave")
 	_check(castle.position.is_equal_approx(Vector3(-4.4, 0.7, 0.0)), "castle must sit farther left at the authored defense position")
-	_check(projectile_origin.get_parent() == castle, "toothpick origin must belong to the castle roof")
-	_check(projectile_origin.position.is_equal_approx(Vector3(0.25, 0.82, 0.0)), "roof launcher offset must remain authored")
+	# [DB:PLAYER:WALL_DEFENDER] superseded the castle-roof launcher. The origin is
+	# now the defender's body, so it travels with the player instead of being
+	# bolted to the castle. The assertion is rewritten rather than dropped.
+	_check(defender != null, "the range must post a WallDefender")
+	_check(defender.get_parent() == range_root, "the defender must belong to the range, not to the castle")
 	range_root.call("_fire_projectile")
-	var roof_toothpick: ToothpickProjectile = range_root.get_node_or_null("ToothpickProjectile") as ToothpickProjectile
-	_check(roof_toothpick != null, "active FIRE must create a roof-launched toothpick")
-	if roof_toothpick != null:
-		_check(roof_toothpick.global_position.is_equal_approx(projectile_origin.global_position), "toothpick must start exactly at the castle roof marker")
-		roof_toothpick.queue_free()
+	var launched: ToothpickProjectile = range_root.get_node_or_null("ToothpickProjectile") as ToothpickProjectile
+	_check(launched != null, "active FIRE must create a toothpick")
+	if launched != null:
+		_check(launched.global_position.is_equal_approx(defender.projectile_origin_position()), "toothpick must start exactly at the defender's firing origin")
+		launched.queue_free()
+
+	# Moving along the patrol must move where shots come from, and nothing else.
+	var origin_before: Vector3 = defender.projectile_origin_position()
+	defender.request_move_to_ratio(1.0)
+	defender._physics_process(1.0)
+	var origin_after: Vector3 = defender.projectile_origin_position()
+	_check(not origin_before.is_equal_approx(origin_after), "patrolling must move the firing origin")
+	_check(is_equal_approx(origin_before.x, origin_after.x), "patrolling must not change the firing lane's reach")
+	_check(castle.position.is_equal_approx(Vector3(-4.4, 0.7, 0.0)), "patrolling must not move the castle")
+	defender.request_move_to_ratio(0.5)
+	defender._physics_process(1.0)
 
 	_check(encounter.bubble_at(0).attempt_castle_impact(castle), "one wave-1 leak must impact the persistent castle")
 	_check(castle.current_health() == 1.0, "one leak must leave persistent castle health at one")
