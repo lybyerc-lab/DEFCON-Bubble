@@ -82,7 +82,10 @@ func _prove_defender_owns_nothing_else() -> void:
 	get_root().add_child(defender)
 	await process_frame
 
-	_check(not (defender is Area3D), "the defender must not be a collision volume")
+	# is_class rather than `is`: the static analyser rejects `is Area3D` on a
+	# Node3D subclass as provably false, but a runtime check still catches
+	# someone re-parenting WallDefender onto Area3D later.
+	_check(not defender.is_class("Area3D"), "the defender must not be a collision volume")
 	_check(defender.get_node_or_null("DamageReceiver") == null, "the defender must not receive damage")
 	for forbidden: String in [
 		"request_damage",
