@@ -21,6 +21,10 @@ func _init() -> void:
 		"3D collision layer 6 must be castle",
 	)
 	_check(
+		ProjectSettings.get_setting("display/window/handheld/orientation", "") == "sensor_landscape",
+		"handheld orientation must stay landscape",
+	)
+	_check(
 		ProjectSettings.get_setting("rendering/renderer/rendering_method.mobile", "") == "mobile",
 		"native mobile must use the Mobile renderer override",
 	)

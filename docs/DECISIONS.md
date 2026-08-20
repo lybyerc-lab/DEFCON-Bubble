@@ -65,3 +65,13 @@ The GitHub Pages review booth is a single site. Whichever build deploys last own
 Only `main` deploys on push. Preview a feature branch through an explicit `workflow_dispatch` run on that branch, re-dispatch after each push while it is under review, and return the booth to `main` when review finishes.
 
 Do not add a feature branch to the push trigger. That edit has to be undone before promotion, and forgetting to undo it leaves the booth serving a merged branch indefinitely.
+
+## DB-DEC-013 Landscape orientation
+
+DEFCON BUBBLE is a landscape game. `display/window/handheld/orientation` is `sensor_landscape`, allowing both landscape rotations so the phone can be held either way, and `[DB:TEST:FOUNDATION_SMOKE]` asserts it so the intent cannot silently drift.
+
+Two axes compete for screen space: the wall the defender patrols, and the distance enemies cross. A phone cannot make both long. The approach axis owns the long edge, because approach pressure is the accepted core tension — seeing them come, deciding, running out of time. Landscape is what gives the approach axis the long edge while combat runs left to right.
+
+This supersedes nothing about the storefront or platform order, which stays open. It settles orientation only.
+
+Portrait is not a supported play orientation. `ArenaCamera` still frames portrait aspects correctly and `[DB:TEST:CAMERA_FRAMING]` still proves it; that is deliberate defensiveness for rotation transitions, browser previews, and unusual viewports, not a second supported layout.
