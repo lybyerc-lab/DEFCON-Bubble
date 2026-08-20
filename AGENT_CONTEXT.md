@@ -27,6 +27,7 @@ The intended shipped experience is a grand native mobile game. Desktop is a deve
 - Touch input, phone-scale readability, safe areas, pause/resume behavior, audio interruption, thermal pressure, memory use, and performance are first-class concerns.
 - Desktop remains valuable for authoring and proof, but desktop-only success is not sufficient acceptance for player-facing mobile behavior.
 - Web builds exist to make exact-source previews easy to open on a phone. They are disposable delivery infrastructure, not gameplay architecture.
+- The game is played in landscape. `display/window/handheld/orientation` is `sensor_landscape` and the foundation proof asserts it. Combat runs left to right and the approach axis owns the long edge of the screen (`DB-DEC-013`).
 - The initial native storefront/platform order is not locked yet. Do not silently turn that open question into an iOS-only or Android-only assumption.
 
 ## Technical baseline
